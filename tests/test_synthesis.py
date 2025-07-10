@@ -14,3 +14,11 @@ def test_timebase_boundaries():
     assert len(m.timebase(0, 16000)) == 0
     with pytest.raises(ValueError):
         m.timebase(1, 0)
+
+
+def test_timebase_invariants():
+    for rate in [8000, 16000, 24000]:
+        clock = m.timebase(0.01, rate)
+        assert len(clock) == rate // 100
+        assert clock[0] == 0 and clock[-1] < 0.01
+        np.testing.assert_allclose(np.diff(clock), 1 / rate)
