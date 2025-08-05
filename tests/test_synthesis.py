@@ -35,3 +35,10 @@ def test_sine_boundaries():
     with pytest.raises(ValueError):
         m.sine(1, 1, 4, 2)
     assert m.sine(1, 0, 4).shape == (0, 1)
+
+
+def test_sine_invariants():
+    x = m.sine(3, 1, 32, 0.7)
+    assert x.shape == (32, 1) and np.max(np.abs(x)) <= 0.7
+    np.testing.assert_allclose(m.sine(3, 1, 32, 0.7, np.pi), -x, atol=1e-14)
+    np.testing.assert_array_equal(m.sine(3, 1, 32, 0), np.zeros((32, 1)))
