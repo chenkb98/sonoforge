@@ -26,3 +26,12 @@ def test_timebase_invariants():
 
 def test_sine_example():
     np.testing.assert_allclose(m.sine(1, 1, 4, 1).ravel(), [0, 1, 0, -1], atol=1e-15)
+
+
+def test_sine_boundaries():
+    for frequency in [-1, 2, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.sine(frequency, 1, 4)
+    with pytest.raises(ValueError):
+        m.sine(1, 1, 4, 2)
+    assert m.sine(1, 0, 4).shape == (0, 1)
