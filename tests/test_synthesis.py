@@ -22,3 +22,7 @@ def test_timebase_invariants():
         assert len(clock) == rate // 100
         assert clock[0] == 0 and clock[-1] < 0.01
         np.testing.assert_allclose(np.diff(clock), 1 / rate)
+
+
+def test_sine_example():
+    np.testing.assert_allclose(m.sine(1, 1, 4, 1).ravel(), [0, 1, 0, -1], atol=1e-15)
