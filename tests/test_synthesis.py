@@ -75,3 +75,10 @@ def test_sawtooth_boundaries():
     with pytest.raises(ValueError):
         m.sawtooth(1, 1, 4, -0.1)
     assert m.sawtooth(1, 0, 4).shape == (0, 1)
+
+
+def test_sawtooth_invariants():
+    x = m.sawtooth(1, 2, 16, 0.3)
+    assert np.max(np.abs(x)) <= 0.3
+    np.testing.assert_allclose(x[:16], x[16:])
+    np.testing.assert_allclose(m.sawtooth(1, 2, 16, 0.6), x * 2)
