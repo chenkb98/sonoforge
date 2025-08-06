@@ -55,3 +55,10 @@ def test_square_boundaries():
     with pytest.raises(ValueError):
         m.square(1, 1, 4, -0.1)
     assert m.square(1, 0, 4).shape == (0, 1)
+
+
+def test_square_invariants():
+    x = m.square(1, 2, 16, 0.3)
+    assert np.max(np.abs(x)) <= 0.3
+    np.testing.assert_allclose(x[:16], x[16:])
+    np.testing.assert_allclose(m.square(1, 2, 16, 0.6), x * 2)
