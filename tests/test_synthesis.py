@@ -46,3 +46,12 @@ def test_sine_invariants():
 
 def test_square_example():
     np.testing.assert_allclose(m.square(1, 1, 4, 1).ravel(), [1, 1, 1, -1], atol=1e-15)
+
+
+def test_square_boundaries():
+    for frequency in [-1, 2, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.square(frequency, 1, 4)
+    with pytest.raises(ValueError):
+        m.square(1, 1, 4, -0.1)
+    assert m.square(1, 0, 4).shape == (0, 1)
