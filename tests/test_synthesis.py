@@ -66,3 +66,12 @@ def test_square_invariants():
 
 def test_sawtooth_example():
     np.testing.assert_allclose(m.sawtooth(1, 1, 4, 1).ravel(), [-1, -0.5, 0, 0.5], atol=1e-15)
+
+
+def test_sawtooth_boundaries():
+    for frequency in [-1, 2, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.sawtooth(frequency, 1, 4)
+    with pytest.raises(ValueError):
+        m.sawtooth(1, 1, 4, -0.1)
+    assert m.sawtooth(1, 0, 4).shape == (0, 1)
