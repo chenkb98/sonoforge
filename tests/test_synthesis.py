@@ -62,3 +62,7 @@ def test_square_invariants():
     assert np.max(np.abs(x)) <= 0.3
     np.testing.assert_allclose(x[:16], x[16:])
     np.testing.assert_allclose(m.square(1, 2, 16, 0.6), x * 2)
+
+
+def test_sawtooth_example():
+    np.testing.assert_allclose(m.sawtooth(1, 1, 4, 1).ravel(), [-1, -0.5, 0, 0.5], atol=1e-15)
