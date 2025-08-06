@@ -28,3 +28,13 @@ def sine(
     ):
         raise ValueError("invalid oscillator frequency, amplitude or phase")
     return as_audio(amplitude * np.sin(2 * np.pi * frequency * clock + phase))
+
+
+def square(
+    frequency: float, seconds: float, rate: int = 16000, amplitude: float = 0.5
+) -> NDArray[np.float64]:
+    """Generate a simple square oscillator; higher harmonics are not bandlimited."""
+    sine(frequency, 0, rate, amplitude)
+    clock = timebase(seconds, rate)
+    cycles = frequency * clock
+    return as_audio(amplitude * (np.where(cycles - np.floor(cycles) <= 0.5, 1.0, -1.0)))
