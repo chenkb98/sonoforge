@@ -86,3 +86,12 @@ def test_sawtooth_invariants():
 
 def test_triangle_example():
     np.testing.assert_allclose(m.triangle(1, 1, 4, 1).ravel(), [-1, 0, 1, 0], atol=1e-15)
+
+
+def test_triangle_boundaries():
+    for frequency in [-1, 2, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.triangle(frequency, 1, 4)
+    with pytest.raises(ValueError):
+        m.triangle(1, 1, 4, -0.1)
+    assert m.triangle(1, 0, 4).shape == (0, 1)
