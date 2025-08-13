@@ -48,3 +48,13 @@ def sawtooth(
     clock = timebase(seconds, rate)
     cycles = frequency * clock
     return as_audio(amplitude * (2 * (cycles - np.floor(cycles)) - 1))
+
+
+def triangle(
+    frequency: float, seconds: float, rate: int = 16000, amplitude: float = 0.5
+) -> NDArray[np.float64]:
+    """Generate a simple triangle oscillator; higher harmonics are not bandlimited."""
+    sine(frequency, 0, rate, amplitude)
+    clock = timebase(seconds, rate)
+    cycles = frequency * clock
+    return as_audio(amplitude * (1 - 4 * np.abs(cycles - np.floor(cycles) - 0.5)))

@@ -82,3 +82,7 @@ def test_sawtooth_invariants():
     assert np.max(np.abs(x)) <= 0.3
     np.testing.assert_allclose(x[:16], x[16:])
     np.testing.assert_allclose(m.sawtooth(1, 2, 16, 0.6), x * 2)
+
+
+def test_triangle_example():
+    np.testing.assert_allclose(m.triangle(1, 1, 4, 1).ravel(), [-1, 0, 1, 0], atol=1e-15)
