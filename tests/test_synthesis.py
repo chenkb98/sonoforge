@@ -95,3 +95,10 @@ def test_triangle_boundaries():
     with pytest.raises(ValueError):
         m.triangle(1, 1, 4, -0.1)
     assert m.triangle(1, 0, 4).shape == (0, 1)
+
+
+def test_triangle_invariants():
+    x = m.triangle(1, 2, 16, 0.3)
+    assert np.max(np.abs(x)) <= 0.3
+    np.testing.assert_allclose(x[:16], x[16:])
+    np.testing.assert_allclose(m.triangle(1, 2, 16, 0.6), x * 2)
