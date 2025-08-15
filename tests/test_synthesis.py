@@ -115,3 +115,14 @@ def test_noise_boundaries():
     with pytest.raises(ValueError):
         m.noise(0.01, amplitude=np.nan)
     assert m.noise(0).shape == (0, 1)
+
+
+def test_noise_invariants():
+    np.testing.assert_array_equal(m.noise(0.01, seed=17), m.noise(0.01, seed=17))
+    assert not np.array_equal(m.noise(0.01, seed=17), m.noise(0.01, seed=18))
+    assert np.max(np.abs(m.noise(1, seed=5, amplitude=0.2))) <= 0.2
+    np.random.seed(123)
+    expected = np.random.random()
+    np.random.seed(123)
+    m.noise(0.01)
+    assert np.random.random() == expected
