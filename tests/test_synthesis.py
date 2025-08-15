@@ -106,3 +106,12 @@ def test_triangle_invariants():
 
 def test_noise_example():
     assert m.noise(0.01, 16000, 7).shape == (160, 1)
+
+
+def test_noise_boundaries():
+    for seed in [-1, True, 1.5, 2**63]:
+        with pytest.raises(ValueError):
+            m.noise(0.01, seed=seed)
+    with pytest.raises(ValueError):
+        m.noise(0.01, amplitude=np.nan)
+    assert m.noise(0).shape == (0, 1)
