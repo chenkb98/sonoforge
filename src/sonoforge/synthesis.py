@@ -58,3 +58,15 @@ def triangle(
     clock = timebase(seconds, rate)
     cycles = frequency * clock
     return as_audio(amplitude * (1 - 4 * np.abs(cycles - np.floor(cycles) - 0.5)))
+
+
+def noise(
+    seconds: float, rate: int = 16000, seed: int = 0, amplitude: float = 0.5
+) -> NDArray[np.float64]:
+    """Generate seeded uniform white noise without changing NumPy global RNG."""
+    clock = timebase(seconds, rate)
+    if isinstance(seed, bool) or not isinstance(seed, int) or not 0 <= seed < 2**63:
+        raise ValueError("seed must be an integer in [0, 2**63)")
+    if not np.isfinite(amplitude) or not 0 <= amplitude <= 1:
+        raise ValueError("invalid amplitude")
+    return as_audio(np.random.default_rng(seed).uniform(-amplitude, amplitude, len(clock)))

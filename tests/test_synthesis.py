@@ -102,3 +102,7 @@ def test_triangle_invariants():
     assert np.max(np.abs(x)) <= 0.3
     np.testing.assert_allclose(x[:16], x[16:])
     np.testing.assert_allclose(m.triangle(1, 2, 16, 0.6), x * 2)
+
+
+def test_noise_example():
+    assert m.noise(0.01, 16000, 7).shape == (160, 1)
