@@ -152,3 +152,13 @@ def test_chirp_invariants():
 
 def test_harmonics_example():
     np.testing.assert_allclose(m.harmonics(1, [1], 1, 8), m.sine(1, 1, 8, 1))
+
+
+def test_harmonics_boundaries():
+    for weights in [[], [np.nan], [[1]], [np.inf]]:
+        with pytest.raises(ValueError):
+            m.harmonics(1, weights, 1, 8)
+    with pytest.raises(ValueError):
+        m.harmonics(1, [1, 1, 1, 1], 1, 8)
+    with pytest.raises(ValueError):
+        m.harmonics(0, [1], 1, 8)
