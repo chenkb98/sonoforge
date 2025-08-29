@@ -126,3 +126,7 @@ def test_noise_invariants():
     np.random.seed(123)
     m.noise(0.01)
     assert np.random.random() == expected
+
+
+def test_chirp_example():
+    np.testing.assert_allclose(m.chirp(1, 1, 1, 8), m.sine(1, 1, 8))

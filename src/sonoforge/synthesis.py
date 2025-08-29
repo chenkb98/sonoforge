@@ -70,3 +70,14 @@ def noise(
     if not np.isfinite(amplitude) or not 0 <= amplitude <= 1:
         raise ValueError("invalid amplitude")
     return as_audio(np.random.default_rng(seed).uniform(-amplitude, amplitude, len(clock)))
+
+
+def chirp(
+    start_hz: float, end_hz: float, seconds: float, rate: int = 16000, amplitude: float = 0.5
+) -> NDArray[np.float64]:
+    """Generate a linear frequency sweep using the integrated phase."""
+    sine(start_hz, 0, rate, amplitude)
+    sine(end_hz, 0, rate, amplitude)
+    clock = timebase(seconds, rate)
+    slope = (end_hz - start_hz) / seconds if seconds else 0.0
+    return as_audio(amplitude * np.sin(2 * np.pi * (start_hz * clock + 0.5 * slope * clock**2)))
