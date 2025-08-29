@@ -81,3 +81,20 @@ def chirp(
     clock = timebase(seconds, rate)
     slope = (end_hz - start_hz) / seconds if seconds else 0.0
     return as_audio(amplitude * np.sin(2 * np.pi * (start_hz * clock + 0.5 * slope * clock**2)))
+
+
+def harmonics(
+    fundamental: float, weights: ArrayLike, seconds: float, rate: int = 16000
+) -> NDArray[np.float64]:
+    """Add harmonics below Nyquist, normalized by total absolute weight."""
+    values = np.asarray(weights, dtype=float)
+    if values.ndim != 1 or not len(values) or not np.isfinite(values).all():
+        raise ValueError("weights must be a nonempty finite vector")
+    sine(fundamental, 0, rate)
+    if fundamental <= 0 or fundamental * len(values) >= rate / 2:
+        raise ValueError("all harmonics must be below Nyquist")
+    result = np.zeros((len(timebase(seconds, rate)), 1))
+    for index, weight in enumerate(values, 1):
+        result += weight * sine(fundamental * index, seconds, rate, 1)
+    total = float(np.abs(values).sum())
+    return result / total if total else result

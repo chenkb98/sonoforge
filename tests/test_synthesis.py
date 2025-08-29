@@ -148,3 +148,7 @@ def test_chirp_invariants():
         assert x.shape == (800, 1) and np.max(np.abs(x)) <= 0.25
         assert x[0, 0] == 0
         np.testing.assert_array_equal(m.chirp(start, end, 0.1, 8000, 0.25), x)
+
+
+def test_harmonics_example():
+    np.testing.assert_allclose(m.harmonics(1, [1], 1, 8), m.sine(1, 1, 8, 1))
