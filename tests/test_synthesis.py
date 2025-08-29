@@ -130,3 +130,13 @@ def test_noise_invariants():
 
 def test_chirp_example():
     np.testing.assert_allclose(m.chirp(1, 1, 1, 8), m.sine(1, 1, 8))
+
+
+def test_chirp_boundaries():
+    assert m.chirp(1, 2, 0, 8).shape == (0, 1)
+    with pytest.raises(ValueError):
+        m.chirp(-1, 2, 1, 8)
+    with pytest.raises(ValueError):
+        m.chirp(1, 4, 1, 8)
+    with pytest.raises(ValueError):
+        m.chirp(1, 2, -1, 8)
