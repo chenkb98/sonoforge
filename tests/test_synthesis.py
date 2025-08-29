@@ -140,3 +140,11 @@ def test_chirp_boundaries():
         m.chirp(1, 4, 1, 8)
     with pytest.raises(ValueError):
         m.chirp(1, 2, -1, 8)
+
+
+def test_chirp_invariants():
+    for start, end in [(100, 1000), (1000, 100)]:
+        x = m.chirp(start, end, 0.1, 8000, 0.25)
+        assert x.shape == (800, 1) and np.max(np.abs(x)) <= 0.25
+        assert x[0, 0] == 0
+        np.testing.assert_array_equal(m.chirp(start, end, 0.1, 8000, 0.25), x)
