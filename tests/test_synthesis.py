@@ -162,3 +162,10 @@ def test_harmonics_boundaries():
         m.harmonics(1, [1, 1, 1, 1], 1, 8)
     with pytest.raises(ValueError):
         m.harmonics(0, [1], 1, 8)
+
+
+def test_harmonics_invariants():
+    x = m.harmonics(1, [1, 0.5, -0.25], 1, 16)
+    assert np.max(np.abs(x)) <= 1
+    np.testing.assert_allclose(m.harmonics(1, [2, 1, -0.5], 1, 16), x)
+    np.testing.assert_array_equal(m.harmonics(1, [0, 0], 1, 16), np.zeros((16, 1)))
