@@ -192,3 +192,9 @@ def test_adsr_invariants():
             assert np.all((env >= 0) & (env <= 1))
             if release:
                 assert env[-1] == 0
+
+
+def test_apply_envelope_example():
+    np.testing.assert_allclose(
+        m.apply_envelope([[1, -1], [1, -1]], [0, 0.5]), [[0, 0], [0.5, -0.5]]
+    )

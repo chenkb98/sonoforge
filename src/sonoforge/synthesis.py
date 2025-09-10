@@ -120,3 +120,16 @@ def adsr(
             np.linspace(level, 0, release) if release > 1 else np.zeros(release),
         ]
     )
+
+
+def apply_envelope(samples: ArrayLike, envelope: ArrayLike) -> NDArray[np.float64]:
+    """Apply a finite, nonnegative envelope equally across channels."""
+    audio, values = as_audio(samples), np.asarray(envelope, dtype=float)
+    if (
+        values.ndim != 1
+        or len(values) != len(audio)
+        or not np.isfinite(values).all()
+        or np.any(values < 0)
+    ):
+        raise ValueError("envelope must be a nonnegative vector matching the audio")
+    return as_audio(audio * values[:, None])
