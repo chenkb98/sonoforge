@@ -98,3 +98,25 @@ def harmonics(
         result += weight * sine(fundamental * index, seconds, rate, 1)
     total = float(np.abs(values).sum())
     return result / total if total else result
+
+
+def adsr(
+    attack: int, decay: int, sustain: int, release: int, level: float = 0.7
+) -> NDArray[np.float64]:
+    """Construct an ADSR envelope from explicit stage frame counts."""
+    lengths = [attack, decay, sustain, release]
+    if (
+        any(isinstance(v, bool) or not isinstance(v, int) or v < 0 for v in lengths)
+        or sum(lengths) > 10000000
+    ):
+        raise ValueError("stage lengths must be bounded nonnegative integers")
+    if not np.isfinite(level) or not 0 <= level <= 1:
+        raise ValueError("sustain level must be in [0, 1]")
+    return np.concatenate(
+        [
+            np.linspace(0, 1, attack, endpoint=False),
+            np.linspace(1, level, decay, endpoint=False),
+            np.full(sustain, level),
+            np.linspace(level, 0, release) if release > 1 else np.zeros(release),
+        ]
+    )

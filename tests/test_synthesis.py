@@ -169,3 +169,7 @@ def test_harmonics_invariants():
     assert np.max(np.abs(x)) <= 1
     np.testing.assert_allclose(m.harmonics(1, [2, 1, -0.5], 1, 16), x)
     np.testing.assert_array_equal(m.harmonics(1, [0, 0], 1, 16), np.zeros((16, 1)))
+
+
+def test_adsr_example():
+    np.testing.assert_allclose(m.adsr(2, 2, 2, 2, 0.5), [0, 0.5, 1, 0.75, 0.5, 0.5, 0.5, 0])
