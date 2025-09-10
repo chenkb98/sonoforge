@@ -182,3 +182,13 @@ def test_adsr_boundaries():
             m.adsr(*lengths)
     with pytest.raises(ValueError):
         m.adsr(1, 1, 1, 1, 2)
+
+
+def test_adsr_invariants():
+    for attack in range(3):
+        for release in range(3):
+            env = m.adsr(attack, 2, 3, release, 0.4)
+            assert len(env) == attack + release + 5
+            assert np.all((env >= 0) & (env <= 1))
+            if release:
+                assert env[-1] == 0
