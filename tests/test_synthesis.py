@@ -205,3 +205,13 @@ def test_apply_envelope_boundaries():
         with pytest.raises(ValueError):
             m.apply_envelope([1, 2], envelope)
     assert m.apply_envelope([], []).shape == (0, 1)
+
+
+def test_apply_envelope_invariants():
+    x = np.arange(8).reshape(4, 2)
+    np.testing.assert_array_equal(m.apply_envelope(x, np.ones(4)), x)
+    np.testing.assert_array_equal(m.apply_envelope(x, np.zeros(4)), np.zeros((4, 2)))
+    a, b = np.array([1, 0.5, 0.2, 0]), np.array([0.1, 0.2, 0.3, 0.4])
+    np.testing.assert_allclose(
+        m.apply_envelope(m.apply_envelope(x, a), b), m.apply_envelope(x, a * b)
+    )
