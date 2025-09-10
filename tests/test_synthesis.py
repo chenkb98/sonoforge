@@ -198,3 +198,10 @@ def test_apply_envelope_example():
     np.testing.assert_allclose(
         m.apply_envelope([[1, -1], [1, -1]], [0, 0.5]), [[0, 0], [0.5, -0.5]]
     )
+
+
+def test_apply_envelope_boundaries():
+    for envelope in [[1], [-1, 1], [np.nan, 1], [[1], [1]]]:
+        with pytest.raises(ValueError):
+            m.apply_envelope([1, 2], envelope)
+    assert m.apply_envelope([], []).shape == (0, 1)
