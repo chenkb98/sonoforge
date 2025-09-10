@@ -173,3 +173,12 @@ def test_harmonics_invariants():
 
 def test_adsr_example():
     np.testing.assert_allclose(m.adsr(2, 2, 2, 2, 0.5), [0, 0.5, 1, 0.75, 0.5, 0.5, 0.5, 0])
+
+
+def test_adsr_boundaries():
+    assert len(m.adsr(0, 0, 0, 0)) == 0
+    for lengths in [(-1, 0, 0, 0), (0, 1.5, 0, 0), (0, 0, True, 0)]:
+        with pytest.raises(ValueError):
+            m.adsr(*lengths)
+    with pytest.raises(ValueError):
+        m.adsr(1, 1, 1, 1, 2)
