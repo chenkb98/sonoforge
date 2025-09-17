@@ -219,3 +219,10 @@ def test_apply_envelope_invariants():
 
 def test_tone_bank_example():
     assert m.tone_bank([100, 200], 0.01, 8000).shape == (80, 2)
+
+
+def test_tone_bank_boundaries():
+    for frequencies in [[], np.ones(9), [[100]], [np.nan], [-1], [4000]]:
+        with pytest.raises(ValueError):
+            m.tone_bank(frequencies, 0.01, 8000)
+    assert m.tone_bank([100, 200], 0, 8000).shape == (0, 2)
