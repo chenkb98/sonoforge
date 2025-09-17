@@ -226,3 +226,11 @@ def test_tone_bank_boundaries():
         with pytest.raises(ValueError):
             m.tone_bank(frequencies, 0.01, 8000)
     assert m.tone_bank([100, 200], 0, 8000).shape == (0, 2)
+
+
+def test_tone_bank_invariants():
+    values = [100, 200, 300]
+    x = m.tone_bank(values, 0.01, 8000)
+    for i, value in enumerate(values):
+        np.testing.assert_array_equal(x[:, i], m.sine(value, 0.01, 8000)[:, 0])
+    np.testing.assert_array_equal(m.tone_bank(values[::-1], 0.01, 8000), x[:, ::-1])
