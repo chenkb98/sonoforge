@@ -215,3 +215,7 @@ def test_apply_envelope_invariants():
     np.testing.assert_allclose(
         m.apply_envelope(m.apply_envelope(x, a), b), m.apply_envelope(x, a * b)
     )
+
+
+def test_tone_bank_example():
+    assert m.tone_bank([100, 200], 0.01, 8000).shape == (80, 2)

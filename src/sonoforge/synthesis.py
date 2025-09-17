@@ -133,3 +133,13 @@ def apply_envelope(samples: ArrayLike, envelope: ArrayLike) -> NDArray[np.float6
     ):
         raise ValueError("envelope must be a nonnegative vector matching the audio")
     return as_audio(audio * values[:, None])
+
+
+def tone_bank(
+    frequencies: ArrayLike, seconds: float, rate: int = 16000, amplitude: float = 0.5
+) -> NDArray[np.float64]:
+    """Render one oscillator per channel, for up to eight tones."""
+    values = np.asarray(frequencies, dtype=float)
+    if values.ndim != 1 or not 1 <= len(values) <= 8:
+        raise ValueError("tone bank needs 1..8 frequencies")
+    return np.column_stack([sine(float(value), seconds, rate, amplitude)[:, 0] for value in values])
