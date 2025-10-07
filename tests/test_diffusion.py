@@ -23,3 +23,7 @@ def test_linear_schedule_invariants():
         assert np.all((schedule > 0) & (schedule < 1))
         assert np.all(np.diff(schedule) >= 0)
         assert schedule[0] == 0.0001
+
+
+def test_cosine_schedule_example():
+    np.testing.assert_allclose(m.cosine_schedule(2, 0), [0.5, 0.999], atol=1e-14)
