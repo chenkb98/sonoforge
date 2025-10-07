@@ -36,3 +36,12 @@ def test_cosine_schedule_boundaries():
     with pytest.raises(ValueError):
         m.cosine_schedule(0)
     assert m.cosine_schedule(1)[0] == 0.999
+
+
+def test_cosine_schedule_invariants():
+    for steps in [2, 10, 100]:
+        beta = m.cosine_schedule(steps)
+        assert len(beta) == steps and np.all((beta > 0) & (beta < 1))
+        alpha = np.cumprod(1 - beta)
+        assert np.all(np.diff(alpha) < 0)
+        np.testing.assert_array_equal(beta, m.cosine_schedule(steps))
