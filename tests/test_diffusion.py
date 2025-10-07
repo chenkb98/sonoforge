@@ -27,3 +27,12 @@ def test_linear_schedule_invariants():
 
 def test_cosine_schedule_example():
     np.testing.assert_allclose(m.cosine_schedule(2, 0), [0.5, 0.999], atol=1e-14)
+
+
+def test_cosine_schedule_boundaries():
+    for offset in [-1, 2, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.cosine_schedule(5, offset)
+    with pytest.raises(ValueError):
+        m.cosine_schedule(0)
+    assert m.cosine_schedule(1)[0] == 0.999
