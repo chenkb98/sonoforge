@@ -49,3 +49,9 @@ def test_cosine_schedule_invariants():
 
 def test_validate_schedule_example():
     np.testing.assert_array_equal(m.validate_schedule([0.1, 0.2]), [0.1, 0.2])
+
+
+def test_validate_schedule_boundaries():
+    for invalid in [[], [0], [1], [-1], [np.nan], [[0.1]], [".1"], [True], [0.999] * 10]:
+        with pytest.raises(ValueError):
+            m.validate_schedule(invalid)
