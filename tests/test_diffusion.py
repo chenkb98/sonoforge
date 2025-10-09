@@ -45,3 +45,7 @@ def test_cosine_schedule_invariants():
         alpha = np.cumprod(1 - beta)
         assert np.all(np.diff(alpha) < 0)
         np.testing.assert_array_equal(beta, m.cosine_schedule(steps))
+
+
+def test_validate_schedule_example():
+    np.testing.assert_array_equal(m.validate_schedule([0.1, 0.2]), [0.1, 0.2])

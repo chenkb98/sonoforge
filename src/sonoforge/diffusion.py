@@ -23,3 +23,18 @@ def cosine_schedule(steps: int, offset: float = 0.008) -> NDArray[np.float64]:
     alpha = np.cos((time + offset) / (1 + offset) * np.pi / 2) ** 2
     alpha /= alpha[0]
     return np.clip(1 - alpha[1:] / alpha[:-1], 1e-8, 0.999)
+
+
+def validate_schedule(betas: ArrayLike) -> NDArray[np.float64]:
+    """Copy a valid nonempty beta vector and verify usable cumulative alphas."""
+    raw = np.asarray(betas)
+    if raw.dtype.kind not in "iuf" or raw.ndim != 1 or not 1 <= len(raw) <= 10000:
+        raise ValueError("betas must be a bounded real numeric vector")
+    values = np.array(raw, dtype=float, copy=True)
+    if (
+        not np.isfinite(values).all()
+        or np.any((values <= 0) | (values >= 1))
+        or np.prod(1 - values) < 1e-15
+    ):
+        raise ValueError("schedule has invalid variances or unusably small cumulative alpha")
+    return values
