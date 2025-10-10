@@ -68,3 +68,13 @@ def test_validate_schedule_invariants():
 
 def test_forward_noise_example():
     np.testing.assert_allclose(m.forward_noise([1, 0], [0, 1], 0.25), [0.5, np.sqrt(0.75)])
+
+
+def test_forward_noise_boundaries():
+    for alpha in [-1, 2, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.forward_noise([1], [0], alpha)
+    with pytest.raises(ValueError):
+        m.forward_noise([1], [0, 1], 0.5)
+    with pytest.raises(ValueError):
+        m.forward_noise([np.nan], [0], 0.5)
