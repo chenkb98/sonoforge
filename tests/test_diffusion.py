@@ -55,3 +55,12 @@ def test_validate_schedule_boundaries():
     for invalid in [[], [0], [1], [-1], [np.nan], [[0.1]], [".1"], [True], [0.999] * 10]:
         with pytest.raises(ValueError):
             m.validate_schedule(invalid)
+
+
+def test_validate_schedule_invariants():
+    x = np.array([0.1, 0.2, 0.3])
+    y = m.validate_schedule(x)
+    y[0] = 0.5
+    assert x[0] == 0.1
+    np.testing.assert_array_equal(m.validate_schedule(m.validate_schedule(x)), x)
+    assert np.prod(1 - m.validate_schedule(m.linear_schedule(100))) > 0
