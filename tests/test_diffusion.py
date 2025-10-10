@@ -64,3 +64,7 @@ def test_validate_schedule_invariants():
     assert x[0] == 0.1
     np.testing.assert_array_equal(m.validate_schedule(m.validate_schedule(x)), x)
     assert np.prod(1 - m.validate_schedule(m.linear_schedule(100))) > 0
+
+
+def test_forward_noise_example():
+    np.testing.assert_allclose(m.forward_noise([1, 0], [0, 1], 0.25), [0.5, np.sqrt(0.75)])

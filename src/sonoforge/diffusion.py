@@ -38,3 +38,17 @@ def validate_schedule(betas: ArrayLike) -> NDArray[np.float64]:
     ):
         raise ValueError("schedule has invalid variances or unusably small cumulative alpha")
     return values
+
+
+def forward_noise(clean: ArrayLike, noise: ArrayLike, alpha: float) -> NDArray[np.float64]:
+    """Mix explicit clean samples and epsilon at a cumulative signal fraction."""
+    a, b = np.asarray(clean, dtype=float), np.asarray(noise, dtype=float)
+    if (
+        a.shape != b.shape
+        or not np.isfinite(a).all()
+        or not np.isfinite(b).all()
+        or not np.isfinite(alpha)
+        or not 0 <= alpha <= 1
+    ):
+        raise ValueError("noise mixing requires finite equal shapes and alpha in [0, 1]")
+    return np.sqrt(alpha) * a + np.sqrt(1 - alpha) * b
