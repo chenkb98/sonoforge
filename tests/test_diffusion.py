@@ -78,3 +78,10 @@ def test_forward_noise_boundaries():
         m.forward_noise([1], [0, 1], 0.5)
     with pytest.raises(ValueError):
         m.forward_noise([np.nan], [0], 0.5)
+
+
+def test_forward_noise_invariants():
+    x, epsilon = np.array([1, -1]), np.array([0.3, 0.7])
+    np.testing.assert_array_equal(m.forward_noise(x, epsilon, 1), x)
+    np.testing.assert_array_equal(m.forward_noise(x, epsilon, 0), epsilon)
+    np.testing.assert_allclose(m.forward_noise(x, epsilon, 0.3), m.forward_noise(epsilon, x, 0.7))
