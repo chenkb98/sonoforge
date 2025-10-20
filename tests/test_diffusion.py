@@ -89,3 +89,12 @@ def test_forward_noise_invariants():
 
 def test_predict_clean_example():
     np.testing.assert_allclose(m.predict_clean([0.5, np.sqrt(0.75)], [0, 1], 0.25), [1, 0])
+
+
+def test_predict_clean_boundaries():
+    for alpha in [0, -1, 1e-20, np.nan]:
+        with pytest.raises(ValueError):
+            m.predict_clean([1], [0], alpha)
+    with pytest.raises(ValueError):
+        m.predict_clean([1], [0, 0], 0.5)
+    np.testing.assert_array_equal(m.predict_clean([1, 2], [9, 9], 1), [1, 2])
