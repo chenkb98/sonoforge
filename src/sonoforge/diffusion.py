@@ -52,3 +52,12 @@ def forward_noise(clean: ArrayLike, noise: ArrayLike, alpha: float) -> NDArray[n
     ):
         raise ValueError("noise mixing requires finite equal shapes and alpha in [0, 1]")
     return np.sqrt(alpha) * a + np.sqrt(1 - alpha) * b
+
+
+def predict_clean(noisy: ArrayLike, epsilon: ArrayLike, alpha: float) -> NDArray[np.float64]:
+    """Invert the forward process for a given epsilon prediction."""
+    a, b = np.asarray(noisy, dtype=float), np.asarray(epsilon, dtype=float)
+    forward_noise(a, b, alpha)
+    if alpha < 1e-15:
+        raise ValueError("alpha is too small to invert")
+    return (a - np.sqrt(1 - alpha) * b) / np.sqrt(alpha)

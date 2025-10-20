@@ -85,3 +85,7 @@ def test_forward_noise_invariants():
     np.testing.assert_array_equal(m.forward_noise(x, epsilon, 1), x)
     np.testing.assert_array_equal(m.forward_noise(x, epsilon, 0), epsilon)
     np.testing.assert_allclose(m.forward_noise(x, epsilon, 0.3), m.forward_noise(epsilon, x, 0.7))
+
+
+def test_predict_clean_example():
+    np.testing.assert_allclose(m.predict_clean([0.5, np.sqrt(0.75)], [0, 1], 0.25), [1, 0])
