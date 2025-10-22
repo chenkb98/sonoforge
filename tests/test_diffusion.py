@@ -129,3 +129,9 @@ def test_ddim_step_invariants():
     np.testing.assert_allclose(m.ddim_step(noisy, epsilon, 0.2, 0.2), noisy)
     via = m.ddim_step(m.ddim_step(noisy, epsilon, 0.2, 0.6), epsilon, 0.6, 1)
     np.testing.assert_allclose(via, clean, atol=1e-14)
+
+
+def test_initialize_model_example():
+    model = m.initialize_model(4, 3)
+    assert set(model) == {"weights", "bias"}
+    assert model["weights"].shape == (5, 4) and model["bias"].shape == (4,)

@@ -71,3 +71,31 @@ def ddim_step(
     if not np.isfinite(previous_alpha) or not alpha <= previous_alpha <= 1:
         raise ValueError("previous alpha must lie between current alpha and one")
     return forward_noise(clean, epsilon, previous_alpha)
+
+
+def _model(model: dict) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+    if not isinstance(model, dict) or set(model) != {"weights", "bias"}:
+        raise ValueError("model fields must be weights and bias")
+    weights, bias = np.asarray(model["weights"]), np.asarray(model["bias"])
+    if (
+        weights.dtype.kind not in "iuf"
+        or bias.dtype.kind not in "iuf"
+        or weights.ndim != 2
+        or bias.ndim != 1
+        or not 1 <= len(bias) <= 256
+        or weights.shape != (len(bias) + 1, len(bias))
+    ):
+        raise ValueError("invalid affine denoiser shapes")
+    if not np.isfinite(weights).all() or not np.isfinite(bias).all():
+        raise ValueError("model parameters must be finite")
+    return weights.astype(float), bias.astype(float)
+
+
+def initialize_model(width: int = 16, seed: int = 0) -> dict:
+    """Initialize a tiny time-conditioned affine epsilon predictor."""
+    if isinstance(width, bool) or not isinstance(width, int) or not 1 <= width <= 256:
+        raise ValueError("width must be in 1..256")
+    if isinstance(seed, bool) or not isinstance(seed, int) or not 0 <= seed < 2**63:
+        raise ValueError("invalid seed")
+    rng = np.random.default_rng(seed)
+    return {"weights": rng.normal(0, 0.001, (width + 1, width)), "bias": np.zeros(width)}
