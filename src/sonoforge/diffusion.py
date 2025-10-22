@@ -61,3 +61,13 @@ def predict_clean(noisy: ArrayLike, epsilon: ArrayLike, alpha: float) -> NDArray
     if alpha < 1e-15:
         raise ValueError("alpha is too small to invert")
     return (a - np.sqrt(1 - alpha) * b) / np.sqrt(alpha)
+
+
+def ddim_step(
+    noisy: ArrayLike, epsilon: ArrayLike, alpha: float, previous_alpha: float
+) -> NDArray[np.float64]:
+    """Perform a deterministic DDIM step with eta=0 and explicit alphas."""
+    clean = predict_clean(noisy, epsilon, alpha)
+    if not np.isfinite(previous_alpha) or not alpha <= previous_alpha <= 1:
+        raise ValueError("previous alpha must lie between current alpha and one")
+    return forward_noise(clean, epsilon, previous_alpha)

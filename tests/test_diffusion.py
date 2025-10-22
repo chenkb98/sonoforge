@@ -109,3 +109,7 @@ def test_predict_clean_invariants():
             clean,
             atol=1e-12,
         )
+
+
+def test_ddim_step_example():
+    np.testing.assert_allclose(m.ddim_step([0.5], [0], 0.25, 1), [1])
