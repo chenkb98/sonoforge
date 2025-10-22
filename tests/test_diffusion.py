@@ -113,3 +113,11 @@ def test_predict_clean_invariants():
 
 def test_ddim_step_example():
     np.testing.assert_allclose(m.ddim_step([0.5], [0], 0.25, 1), [1])
+
+
+def test_ddim_step_boundaries():
+    for previous in [0.1, 1.1, np.nan, np.inf]:
+        with pytest.raises(ValueError):
+            m.ddim_step([1], [0], 0.25, previous)
+    with pytest.raises(ValueError):
+        m.ddim_step([1], [0], 0, 1)
