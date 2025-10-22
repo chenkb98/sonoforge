@@ -98,3 +98,14 @@ def test_predict_clean_boundaries():
     with pytest.raises(ValueError):
         m.predict_clean([1], [0, 0], 0.5)
     np.testing.assert_array_equal(m.predict_clean([1, 2], [9, 9], 1), [1, 2])
+
+
+def test_predict_clean_invariants():
+    rng = np.random.default_rng(3)
+    clean, epsilon = rng.normal(size=(4, 8)), rng.normal(size=(4, 8))
+    for alpha in [0.001, 0.1, 0.5, 0.99, 1]:
+        np.testing.assert_allclose(
+            m.predict_clean(m.forward_noise(clean, epsilon, alpha), epsilon, alpha),
+            clean,
+            atol=1e-12,
+        )
