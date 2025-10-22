@@ -121,3 +121,11 @@ def test_ddim_step_boundaries():
             m.ddim_step([1], [0], 0.25, previous)
     with pytest.raises(ValueError):
         m.ddim_step([1], [0], 0, 1)
+
+
+def test_ddim_step_invariants():
+    clean, epsilon = [1, -1, 0.2], [0.1, 0.3, -0.2]
+    noisy = m.forward_noise(clean, epsilon, 0.2)
+    np.testing.assert_allclose(m.ddim_step(noisy, epsilon, 0.2, 0.2), noisy)
+    via = m.ddim_step(m.ddim_step(noisy, epsilon, 0.2, 0.6), epsilon, 0.6, 1)
+    np.testing.assert_allclose(via, clean, atol=1e-14)
