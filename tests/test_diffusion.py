@@ -135,3 +135,12 @@ def test_initialize_model_example():
     model = m.initialize_model(4, 3)
     assert set(model) == {"weights", "bias"}
     assert model["weights"].shape == (5, 4) and model["bias"].shape == (4,)
+
+
+def test_initialize_model_boundaries():
+    for width in [0, 257, 1.5, True]:
+        with pytest.raises(ValueError):
+            m.initialize_model(width)
+    for seed in [-1, True, 1.5]:
+        with pytest.raises(ValueError):
+            m.initialize_model(seed=seed)
