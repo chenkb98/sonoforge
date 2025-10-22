@@ -144,3 +144,12 @@ def test_initialize_model_boundaries():
     for seed in [-1, True, 1.5]:
         with pytest.raises(ValueError):
             m.initialize_model(seed=seed)
+
+
+def test_initialize_model_invariants():
+    a, b = m.initialize_model(8, 5), m.initialize_model(8, 5)
+    for key in a:
+        np.testing.assert_array_equal(a[key], b[key])
+    assert not np.array_equal(a["weights"], m.initialize_model(8, 6)["weights"])
+    a["weights"][0, 0] = 99
+    assert b["weights"][0, 0] != 99
