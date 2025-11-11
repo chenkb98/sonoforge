@@ -99,3 +99,32 @@ def initialize_model(width: int = 16, seed: int = 0) -> dict:
         raise ValueError("invalid seed")
     rng = np.random.default_rng(seed)
     return {"weights": rng.normal(0, 0.001, (width + 1, width)), "bias": np.zeros(width)}
+
+
+def _batch(noisy: ArrayLike, times: ArrayLike, width: int) -> NDArray[np.float64]:
+    values = np.asarray(noisy, dtype=float)
+    if values.ndim == 1:
+        values = values[None, :]
+    time = np.asarray(times, dtype=float)
+    if time.ndim == 0:
+        time = np.full(len(values), float(time))
+    if (
+        values.ndim != 2
+        or values.shape[1] != width
+        or time.shape != (len(values),)
+        or not np.isfinite(values).all()
+        or not np.isfinite(time).all()
+        or np.any((time < 0) | (time > 1))
+    ):
+        raise ValueError("batch must match the model width with times in [0, 1]")
+    return np.column_stack([values, time])
+
+
+def predict_noise(model: dict, noisy: ArrayLike, times: ArrayLike) -> NDArray[np.float64]:
+    """Predict epsilon for a batch of short audio windows and normalized times."""
+    weights, bias = _model(model)
+    inputs = _batch(noisy, times, len(bias))
+    result = inputs @ weights + bias
+    if not np.isfinite(result).all():
+        raise ValueError("prediction overflowed")
+    return result

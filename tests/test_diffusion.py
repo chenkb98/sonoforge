@@ -153,3 +153,11 @@ def test_initialize_model_invariants():
     assert not np.array_equal(a["weights"], m.initialize_model(8, 6)["weights"])
     a["weights"][0, 0] = 99
     assert b["weights"][0, 0] != 99
+
+
+def test_predict_noise_example():
+    model = {
+        "weights": np.array([[1.0, 0.0], [0.0, 1.0], [2.0, 3.0]]),
+        "bias": np.array([0.1, -0.1]),
+    }
+    np.testing.assert_allclose(m.predict_noise(model, [1, 2], 0.5), [[2.1, 3.4]])
