@@ -161,3 +161,12 @@ def test_predict_noise_example():
         "bias": np.array([0.1, -0.1]),
     }
     np.testing.assert_allclose(m.predict_noise(model, [1, 2], 0.5), [[2.1, 3.4]])
+
+
+def test_predict_noise_boundaries():
+    model = m.initialize_model(2)
+    for noisy, times in [([1], 0.5), ([1, 2], -1), ([1, np.nan], 0.5), ([[1, 2]], [0, 1])]:
+        with pytest.raises(ValueError):
+            m.predict_noise(model, noisy, times)
+    with pytest.raises(ValueError):
+        m.predict_noise({}, [1, 2], 0.5)
