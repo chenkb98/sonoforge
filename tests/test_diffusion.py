@@ -170,3 +170,13 @@ def test_predict_noise_boundaries():
             m.predict_noise(model, noisy, times)
     with pytest.raises(ValueError):
         m.predict_noise({}, [1, 2], 0.5)
+
+
+def test_predict_noise_invariants():
+    model = m.initialize_model(3, 7)
+    x = np.arange(12).reshape(4, 3)
+    times = np.linspace(0, 1, 4)
+    batch = m.predict_noise(model, x, times)
+    for i in range(4):
+        np.testing.assert_allclose(m.predict_noise(model, x[i], times[i])[0], batch[i])
+    assert m.predict_noise(model, np.empty((0, 3)), []).shape == (0, 3)
