@@ -128,3 +128,18 @@ def predict_noise(model: dict, noisy: ArrayLike, times: ArrayLike) -> NDArray[np
     if not np.isfinite(result).all():
         raise ValueError("prediction overflowed")
     return result
+
+
+def training_loss(
+    model: dict, noisy: ArrayLike, times: ArrayLike, target_noise: ArrayLike
+) -> float:
+    """Mean squared epsilon prediction error on a nonempty batch."""
+    prediction = predict_noise(model, noisy, times)
+    target = np.asarray(target_noise, dtype=float)
+    if target.shape != prediction.shape or not target.size or not np.isfinite(target).all():
+        raise ValueError("targets must be finite, nonempty and match predictions")
+    error = prediction - target
+    result = float(np.mean(error**2))
+    if not np.isfinite(result):
+        raise ValueError("loss overflowed")
+    return result

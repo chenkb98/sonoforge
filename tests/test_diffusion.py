@@ -180,3 +180,8 @@ def test_predict_noise_invariants():
     for i in range(4):
         np.testing.assert_allclose(m.predict_noise(model, x[i], times[i])[0], batch[i])
     assert m.predict_noise(model, np.empty((0, 3)), []).shape == (0, 3)
+
+
+def test_training_loss_example():
+    model = {"weights": np.zeros((3, 2)), "bias": np.zeros(2)}
+    assert m.training_loss(model, [[0, 0]], [0], [[1, 3]]) == 5
