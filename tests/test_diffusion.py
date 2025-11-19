@@ -194,3 +194,11 @@ def test_training_loss_boundaries():
             m.training_loss(model, [[1, 2]], [0.5], target)
     with pytest.raises(ValueError):
         m.training_loss(model, np.empty((0, 2)), [], np.empty((0, 2)))
+
+
+def test_training_loss_invariants():
+    model = m.initialize_model(2)
+    x = np.array([[1, 2], [-1, 1]])
+    y = m.predict_noise(model, x, [0.1, 0.9])
+    assert m.training_loss(model, x, [0.1, 0.9], y) == 0
+    assert m.training_loss(model, x, [0.1, 0.9], y + 0.5) == pytest.approx(0.25)
