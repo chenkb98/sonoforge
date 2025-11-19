@@ -185,3 +185,12 @@ def test_predict_noise_invariants():
 def test_training_loss_example():
     model = {"weights": np.zeros((3, 2)), "bias": np.zeros(2)}
     assert m.training_loss(model, [[0, 0]], [0], [[1, 3]]) == 5
+
+
+def test_training_loss_boundaries():
+    model = m.initialize_model(2)
+    for target in [[[1]], [[np.nan, 1]], []]:
+        with pytest.raises(ValueError):
+            m.training_loss(model, [[1, 2]], [0.5], target)
+    with pytest.raises(ValueError):
+        m.training_loss(model, np.empty((0, 2)), [], np.empty((0, 2)))
