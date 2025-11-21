@@ -219,3 +219,15 @@ def test_train_denoiser_boundaries():
     for rate in [0, -1, np.nan, 2]:
         with pytest.raises(ValueError):
             m.train_denoiser(model, [[1, 2]], 0.5, [[0, 0]], 1, rate)
+
+
+def test_train_denoiser_invariants():
+    model = m.initialize_model(2, 4)
+    original = {key: value.copy() for key, value in model.items()}
+    x, y = [[1, 0], [0, 1]], [[0.2, -0.1], [-0.1, 0.2]]
+    a = m.train_denoiser(model, x, [0.2, 0.8], y, 40)
+    b = m.train_denoiser(model, x, [0.2, 0.8], y, 40)
+    for key in model:
+        np.testing.assert_array_equal(model[key], original[key])
+        np.testing.assert_array_equal(a[key], b[key])
+    assert m.training_loss(a, x, [0.2, 0.8], y) < m.training_loss(model, x, [0.2, 0.8], y)
