@@ -202,3 +202,10 @@ def test_training_loss_invariants():
     y = m.predict_noise(model, x, [0.1, 0.9])
     assert m.training_loss(model, x, [0.1, 0.9], y) == 0
     assert m.training_loss(model, x, [0.1, 0.9], y + 0.5) == pytest.approx(0.25)
+
+
+def test_train_denoiser_example():
+    model = m.initialize_model(2, 1)
+    x = np.array([[1, 0], [0, 1], [-1, 0], [0, -1]])
+    trained = m.train_denoiser(model, x, 0, x, 100, 0.2)
+    assert m.training_loss(trained, x, 0, x) < 1e-7

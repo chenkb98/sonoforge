@@ -143,3 +143,30 @@ def training_loss(
     if not np.isfinite(result):
         raise ValueError("loss overflowed")
     return result
+
+
+def train_denoiser(
+    model: dict,
+    noisy: ArrayLike,
+    times: ArrayLike,
+    target_noise: ArrayLike,
+    steps: int = 100,
+    learning_rate: float = 0.05,
+) -> dict:
+    """Fit the affine baseline with full-batch gradient descent on a copy."""
+    weights, bias = _model(model)
+    inputs = _batch(noisy, times, len(bias))
+    target = np.asarray(target_noise, dtype=float)
+    training_loss(model, noisy, times, target)
+    if isinstance(steps, bool) or not isinstance(steps, int) or not 1 <= steps <= 10000:
+        raise ValueError("training steps must be in 1..10000")
+    if not np.isfinite(learning_rate) or not 0 < learning_rate <= 1:
+        raise ValueError("learning rate must be in (0, 1]")
+    for _ in range(steps):
+        residual = inputs @ weights + bias - target
+        gradient = 2 * residual / target.size
+        weights -= learning_rate * (inputs.T @ gradient)
+        bias -= learning_rate * gradient.sum(axis=0)
+        if not np.isfinite(weights).all() or not np.isfinite(bias).all():
+            raise ValueError("training diverged")
+    return {"weights": weights, "bias": bias}
