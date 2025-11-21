@@ -209,3 +209,13 @@ def test_train_denoiser_example():
     x = np.array([[1, 0], [0, 1], [-1, 0], [0, -1]])
     trained = m.train_denoiser(model, x, 0, x, 100, 0.2)
     assert m.training_loss(trained, x, 0, x) < 1e-7
+
+
+def test_train_denoiser_boundaries():
+    model = m.initialize_model(2)
+    for steps in [0, -1, 1.5, True]:
+        with pytest.raises(ValueError):
+            m.train_denoiser(model, [[1, 2]], 0.5, [[0, 0]], steps)
+    for rate in [0, -1, np.nan, 2]:
+        with pytest.raises(ValueError):
+            m.train_denoiser(model, [[1, 2]], 0.5, [[0, 0]], 1, rate)
