@@ -40,3 +40,7 @@
 ## `train_denoiser`
 
 在参数副本上执行全批次梯度下降，保留原模型以支持失败回滚与比较。测试只验证小型合成任务上的损失下降，不代表已训练语音大模型。
+
+## `checkpoint_encode`
+
+检查模型字段与形状后写入版本化 NPZ，字段仅含 version、weights、bias，不保存 pickle 对象或任意 Python 状态。
