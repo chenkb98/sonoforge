@@ -235,3 +235,14 @@ def test_train_denoiser_invariants():
 
 def test_checkpoint_encode_example():
     assert m.checkpoint_encode(m.initialize_model(4))[:2] == b"PK"
+
+
+def test_checkpoint_encode_boundaries():
+    for model in [
+        {},
+        {"weights": [[1]], "bias": [0]},
+        {"weights": np.zeros((3, 2)), "bias": [0, np.nan]},
+        {"weights": np.zeros((3, 2)), "bias": [0, 0], "extra": 1},
+    ]:
+        with pytest.raises(ValueError):
+            m.checkpoint_encode(model)
