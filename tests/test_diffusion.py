@@ -246,3 +246,14 @@ def test_checkpoint_encode_boundaries():
     ]:
         with pytest.raises(ValueError):
             m.checkpoint_encode(model)
+
+
+def test_checkpoint_encode_invariants():
+    import io
+
+    model = m.initialize_model(5, 7)
+    with np.load(io.BytesIO(m.checkpoint_encode(model)), allow_pickle=False) as data:
+        assert set(data.files) == {"version", "weights", "bias"}
+        np.testing.assert_array_equal(data["version"], [1])
+        for key in model:
+            np.testing.assert_array_equal(data[key], model[key])
