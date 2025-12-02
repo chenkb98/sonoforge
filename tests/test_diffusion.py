@@ -231,3 +231,7 @@ def test_train_denoiser_invariants():
         np.testing.assert_array_equal(model[key], original[key])
         np.testing.assert_array_equal(a[key], b[key])
     assert m.training_loss(a, x, [0.2, 0.8], y) < m.training_loss(model, x, [0.2, 0.8], y)
+
+
+def test_checkpoint_encode_example():
+    assert m.checkpoint_encode(m.initialize_model(4))[:2] == b"PK"

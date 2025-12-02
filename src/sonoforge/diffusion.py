@@ -170,3 +170,13 @@ def train_denoiser(
         if not np.isfinite(weights).all() or not np.isfinite(bias).all():
             raise ValueError("training diverged")
     return {"weights": weights, "bias": bias}
+
+
+def checkpoint_encode(model: dict) -> bytes:
+    """Store the bounded model as a versioned NumPy archive without pickle."""
+    import io
+
+    weights, bias = _model(model)
+    output = io.BytesIO()
+    np.savez(output, version=np.array([1], dtype=np.int64), weights=weights, bias=bias)
+    return output.getvalue()
