@@ -264,3 +264,15 @@ def test_checkpoint_decode_example():
     restored = m.checkpoint_decode(m.checkpoint_encode(model))
     for key in model:
         np.testing.assert_array_equal(restored[key], model[key])
+
+
+def test_checkpoint_decode_boundaries():
+    import io
+
+    for payload in [b"", b"not zip", b"x" * 2000001]:
+        with pytest.raises(ValueError):
+            m.checkpoint_decode(payload)
+    output = io.BytesIO()
+    np.savez(output, version=[2], weights=np.zeros((3, 2)), bias=np.zeros(2))
+    with pytest.raises(ValueError):
+        m.checkpoint_decode(output.getvalue())
