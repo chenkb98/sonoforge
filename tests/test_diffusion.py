@@ -276,3 +276,23 @@ def test_checkpoint_decode_boundaries():
     np.savez(output, version=[2], weights=np.zeros((3, 2)), bias=np.zeros(2))
     with pytest.raises(ValueError):
         m.checkpoint_decode(output.getvalue())
+
+
+def test_checkpoint_decode_invariants():
+    import io
+
+    for width in [1, 7, 32]:
+        model = m.initialize_model(width)
+        result = m.checkpoint_decode(m.checkpoint_encode(model))
+        np.testing.assert_array_equal(
+            m.predict_noise(model, np.ones(width), 0.5),
+            m.predict_noise(result, np.ones(width), 0.5),
+        )
+    for fields in [
+        dict(version=[1], weights=np.zeros((3, 2)), unexpected=np.zeros(2)),
+        dict(version=[True], weights=np.zeros((3, 2)), bias=np.zeros(2)),
+    ]:
+        output = io.BytesIO()
+        np.savez(output, **fields)
+        with pytest.raises(ValueError):
+            m.checkpoint_decode(output.getvalue())
