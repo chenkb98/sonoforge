@@ -44,3 +44,7 @@
 ## `checkpoint_encode`
 
 检查模型字段与形状后写入版本化 NPZ，字段仅含 version、weights、bias，不保存 pickle 对象或任意 Python 状态。
+
+## `checkpoint_decode`
+
+读取时校验压缩包成员数量、解压尺寸、精确字段集合和版本类型，再检查参数形状与有限性。未知字段、错误版本和对象数组均不能进入模型。
