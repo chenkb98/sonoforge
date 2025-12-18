@@ -180,3 +180,31 @@ def checkpoint_encode(model: dict) -> bytes:
     output = io.BytesIO()
     np.savez(output, version=np.array([1], dtype=np.int64), weights=weights, bias=bias)
     return output.getvalue()
+
+
+def checkpoint_decode(payload: bytes) -> dict:
+    """Load only the exact bounded checkpoint schema, refusing object arrays."""
+    import io
+    import zipfile
+
+    if not isinstance(payload, bytes) or len(payload) > 2000000:
+        raise ValueError("invalid checkpoint size or type")
+    try:
+        with zipfile.ZipFile(io.BytesIO(payload)) as archive:
+            if (
+                len(archive.infolist()) != 3
+                or sum(info.file_size for info in archive.infolist()) > 1000000
+            ):
+                raise ValueError("checkpoint archive exceeds its schema limits")
+        with np.load(io.BytesIO(payload), allow_pickle=False) as data:
+            if (
+                set(data.files) != {"version", "weights", "bias"}
+                or data["version"].shape != (1,)
+                or data["version"].dtype.kind not in "iu"
+                or int(data["version"][0]) != 1
+            ):
+                raise ValueError("unsupported checkpoint schema")
+            weights, bias = _model({"weights": data["weights"], "bias": data["bias"]})
+        return {"weights": weights, "bias": bias}
+    except (OSError, EOFError, zipfile.BadZipFile, KeyError) as error:
+        raise ValueError("invalid checkpoint") from error

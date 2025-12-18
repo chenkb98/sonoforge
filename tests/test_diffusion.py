@@ -257,3 +257,10 @@ def test_checkpoint_encode_invariants():
         np.testing.assert_array_equal(data["version"], [1])
         for key in model:
             np.testing.assert_array_equal(data[key], model[key])
+
+
+def test_checkpoint_decode_example():
+    model = m.initialize_model(4, 3)
+    restored = m.checkpoint_decode(m.checkpoint_encode(model))
+    for key in model:
+        np.testing.assert_array_equal(restored[key], model[key])
