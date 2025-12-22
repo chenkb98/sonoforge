@@ -296,3 +296,8 @@ def test_checkpoint_decode_invariants():
         np.savez(output, **fields)
         with pytest.raises(ValueError):
             m.checkpoint_decode(output.getvalue())
+
+
+def test_sample_example():
+    result = m.sample(m.initialize_model(8), m.linear_schedule(10), 3)
+    assert result.shape == (8, 1) and np.isfinite(result).all()

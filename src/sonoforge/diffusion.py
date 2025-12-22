@@ -208,3 +208,18 @@ def checkpoint_decode(payload: bytes) -> dict:
         return {"weights": weights, "bias": bias}
     except (OSError, EOFError, zipfile.BadZipFile, KeyError) as error:
         raise ValueError("invalid checkpoint") from error
+
+
+def sample(model: dict, betas: ArrayLike, seed: int = 0) -> NDArray[np.float64]:
+    """Generate one short waveform with deterministic DDIM and final clipping."""
+    _, bias = _model(model)
+    schedule = validate_schedule(betas)
+    initialize_model(len(bias), seed)
+    rng = np.random.default_rng(seed)
+    current = rng.normal(size=(1, len(bias)))
+    alphas = np.cumprod(1 - schedule)
+    for index in range(len(schedule) - 1, -1, -1):
+        epsilon = predict_noise(model, current, (index + 1) / len(schedule))
+        previous = float(alphas[index - 1]) if index else 1.0
+        current = ddim_step(current, epsilon, float(alphas[index]), previous)
+    return np.clip(current[0, :, None], -1, 1)
