@@ -326,3 +326,11 @@ def test_sample_invariants():
 def test_training_pairs_example():
     noisy, epsilon, times = m.training_pairs(np.zeros((8, 4)), [0.1, 0.2], 7)
     assert noisy.shape == epsilon.shape == (8, 4) and times.shape == (8,)
+
+
+def test_training_pairs_boundaries():
+    for clean in [[], [1, 2], [[np.nan]], np.empty((0, 4)), np.empty((2, 0))]:
+        with pytest.raises(ValueError):
+            m.training_pairs(clean, [0.1])
+    with pytest.raises(ValueError):
+        m.training_pairs([[1]], [], 0)
