@@ -223,3 +223,25 @@ def sample(model: dict, betas: ArrayLike, seed: int = 0) -> NDArray[np.float64]:
         previous = float(alphas[index - 1]) if index else 1.0
         current = ddim_step(current, epsilon, float(alphas[index]), previous)
     return np.clip(current[0, :, None], -1, 1)
+
+
+def training_pairs(
+    clean: ArrayLike, betas: ArrayLike, seed: int = 0
+) -> tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64]]:
+    """Draw timestep/epsilon pairs for finite batches of short clean windows."""
+    windows = np.asarray(clean, dtype=float)
+    if (
+        windows.ndim != 2
+        or not len(windows)
+        or not 1 <= windows.shape[1] <= 256
+        or not np.isfinite(windows).all()
+    ):
+        raise ValueError("clean windows must be a nonempty finite matrix")
+    schedule = validate_schedule(betas)
+    initialize_model(windows.shape[1], seed)
+    rng = np.random.default_rng(seed)
+    indices = rng.integers(0, len(schedule), len(windows))
+    alpha = np.cumprod(1 - schedule)[indices, None]
+    epsilon = rng.normal(size=windows.shape)
+    noisy = np.sqrt(alpha) * windows + np.sqrt(1 - alpha) * epsilon
+    return noisy, epsilon, (indices + 1) / len(schedule)

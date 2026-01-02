@@ -321,3 +321,8 @@ def test_sample_invariants():
     np.testing.assert_array_equal(
         a, m.sample(m.checkpoint_decode(m.checkpoint_encode(model)), beta, 9)
     )
+
+
+def test_training_pairs_example():
+    noisy, epsilon, times = m.training_pairs(np.zeros((8, 4)), [0.1, 0.2], 7)
+    assert noisy.shape == epsilon.shape == (8, 4) and times.shape == (8,)
