@@ -310,3 +310,14 @@ def test_sample_boundaries():
         m.sample(m.initialize_model(2), [0.1], -1)
     with pytest.raises(ValueError):
         m.sample({}, [0.1], 0)
+
+
+def test_sample_invariants():
+    model, beta = m.initialize_model(16, 4), m.linear_schedule(20)
+    a, b = m.sample(model, beta, 9), m.sample(model, beta, 9)
+    np.testing.assert_array_equal(a, b)
+    assert not np.array_equal(a, m.sample(model, beta, 10))
+    assert np.max(np.abs(a)) <= 1
+    np.testing.assert_array_equal(
+        a, m.sample(m.checkpoint_decode(m.checkpoint_encode(model)), beta, 9)
+    )
