@@ -301,3 +301,12 @@ def test_checkpoint_decode_invariants():
 def test_sample_example():
     result = m.sample(m.initialize_model(8), m.linear_schedule(10), 3)
     assert result.shape == (8, 1) and np.isfinite(result).all()
+
+
+def test_sample_boundaries():
+    with pytest.raises(ValueError):
+        m.sample(m.initialize_model(2), [], 0)
+    with pytest.raises(ValueError):
+        m.sample(m.initialize_model(2), [0.1], -1)
+    with pytest.raises(ValueError):
+        m.sample({}, [0.1], 0)
