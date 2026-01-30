@@ -334,3 +334,16 @@ def test_training_pairs_boundaries():
             m.training_pairs(clean, [0.1])
     with pytest.raises(ValueError):
         m.training_pairs([[1]], [], 0)
+
+
+def test_training_pairs_invariants():
+    clean = np.arange(24).reshape(6, 4) / 24
+    beta = np.array([0.1, 0.2, 0.3])
+    noisy, epsilon, times = m.training_pairs(clean, beta, 11)
+    for i, time in enumerate(times):
+        alpha = np.cumprod(1 - beta)[int(round(time * 3)) - 1]
+        np.testing.assert_allclose(
+            m.predict_clean(noisy[i], epsilon[i], alpha), clean[i], atol=1e-14
+        )
+    for a, b in zip(m.training_pairs(clean, beta, 11), (noisy, epsilon, times)):
+        np.testing.assert_array_equal(a, b)
