@@ -21,3 +21,24 @@ def test_config_boundaries():
     ]:
         with pytest.raises(ValueError):
             m.config(values)
+
+
+def test_config_invariants():
+    expected = {
+        "generator",
+        "sample_rate",
+        "duration",
+        "frequency",
+        "end_frequency",
+        "amplitude",
+        "seed",
+        "steps",
+    }
+    assert set(m.config()) == expected
+    for key in expected:
+        candidate = m.config()
+        candidate[key + "_typo"] = candidate[key]
+        with pytest.raises(ValueError):
+            m.config(candidate)
+    value = m.config({"seed": 7})
+    assert m.config(value) == value
