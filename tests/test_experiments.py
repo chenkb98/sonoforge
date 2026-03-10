@@ -46,3 +46,9 @@ def test_config_invariants():
 
 def test_parse_prompt_example():
     assert m.parse_prompt("sine 440") == {"generator": "sine", "frequency": 440.0}
+
+
+def test_parse_prompt_boundaries():
+    for prompt in ["", "a dog barking", "sine", "sine nan", "noise 2", "chirp 10", "sine -1"]:
+        with pytest.raises(ValueError):
+            m.parse_prompt(prompt)
