@@ -54,3 +54,24 @@ def config(values: dict | None = None) -> dict:
         raise ValueError("invalid seed")
     diffusion.linear_schedule(result["steps"])
     return result
+
+
+def parse_prompt(prompt: str) -> dict:
+    """Parse a small symbolic prompt grammar, not natural-language semantics."""
+    if not isinstance(prompt, str) or len(prompt) > 200:
+        raise ValueError("prompt must be a short string")
+    tokens = prompt.strip().lower().split()
+    if tokens == ["noise"]:
+        return {"generator": "noise"}
+    if len(tokens) == 2 and tokens[0] in ["sine", "square", "sawtooth", "triangle"]:
+        values = {"generator": tokens[0], "frequency": float(tokens[1])}
+    elif len(tokens) == 3 and tokens[0] == "chirp":
+        values = {
+            "generator": "chirp",
+            "frequency": float(tokens[1]),
+            "end_frequency": float(tokens[2]),
+        }
+    else:
+        raise ValueError("expected noise, GENERATOR HZ, or chirp START_HZ END_HZ")
+    config(values)
+    return values

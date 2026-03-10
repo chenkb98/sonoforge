@@ -42,3 +42,7 @@ def test_config_invariants():
             m.config(candidate)
     value = m.config({"seed": 7})
     assert m.config(value) == value
+
+
+def test_parse_prompt_example():
+    assert m.parse_prompt("sine 440") == {"generator": "sine", "frequency": 440.0}
