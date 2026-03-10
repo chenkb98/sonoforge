@@ -52,3 +52,11 @@ def test_parse_prompt_boundaries():
     for prompt in ["", "a dog barking", "sine", "sine nan", "noise 2", "chirp 10", "sine -1"]:
         with pytest.raises(ValueError):
             m.parse_prompt(prompt)
+
+
+def test_parse_prompt_invariants():
+    assert m.parse_prompt("  SINE   440 ") == m.parse_prompt("sine 440")
+    assert m.parse_prompt("noise") == {"generator": "noise"}
+    assert m.parse_prompt("chirp 220 880")["end_frequency"] == 880
+    for name in ["sine", "square", "sawtooth", "triangle"]:
+        assert m.parse_prompt(name + " 440")["generator"] == name
