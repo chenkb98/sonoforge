@@ -60,3 +60,10 @@ def test_parse_prompt_invariants():
     assert m.parse_prompt("chirp 220 880")["end_frequency"] == 880
     for name in ["sine", "square", "sawtooth", "triangle"]:
         assert m.parse_prompt(name + " 440")["generator"] == name
+
+
+def test_render_example():
+    np.testing.assert_allclose(
+        m.render({"sample_rate": 8, "frequency": 1, "duration": 1, "amplitude": 1}).ravel(),
+        np.sin(2 * np.pi * np.arange(8) / 8),
+    )

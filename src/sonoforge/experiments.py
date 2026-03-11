@@ -75,3 +75,38 @@ def parse_prompt(prompt: str) -> dict:
         raise ValueError("expected noise, GENERATOR HZ, or chirp START_HZ END_HZ")
     config(values)
     return values
+
+
+def render(settings: dict, model: dict | None = None) -> NDArray[np.float64]:
+    """Render a validated generator configuration into mono audio."""
+    values = config(settings)
+    name, seconds, rate = values["generator"], values["duration"], values["sample_rate"]
+    if name == "noise":
+        return synthesis.noise(seconds, rate, values["seed"], values["amplitude"])
+    if name == "chirp":
+        return synthesis.chirp(
+            values["frequency"], values["end_frequency"], seconds, rate, values["amplitude"]
+        )
+    if name == "diffusion":
+        if model is None:
+            raise ValueError("diffusion generation requires an explicit model")
+        size = len(synthesis.timebase(seconds, rate))
+        if size > 32768:
+            raise ValueError("baseline diffusion output is limited to 32768 frames")
+        if not size:
+            return np.empty((0, 1))
+        parts, total = [], 0
+        while total < size:
+            part = diffusion.sample(
+                model, diffusion.linear_schedule(values["steps"]), values["seed"] + len(parts)
+            )
+            parts.append(part)
+            total += len(part)
+        return audio.concatenate(parts)[:size] * values["amplitude"]
+    generators = dict(
+        sine=synthesis.sine,
+        square=synthesis.square,
+        sawtooth=synthesis.sawtooth,
+        triangle=synthesis.triangle,
+    )
+    return generators[name](values["frequency"], seconds, rate, values["amplitude"])
