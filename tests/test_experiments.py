@@ -67,3 +67,11 @@ def test_render_example():
         m.render({"sample_rate": 8, "frequency": 1, "duration": 1, "amplitude": 1}).ravel(),
         np.sin(2 * np.pi * np.arange(8) / 8),
     )
+
+
+def test_render_boundaries():
+    with pytest.raises(ValueError):
+        m.render({"generator": "diffusion"})
+    with pytest.raises(ValueError):
+        m.render({"generator": "unknown"})
+    assert m.render({"duration": 0}).shape == (0, 1)
