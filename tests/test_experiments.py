@@ -75,3 +75,14 @@ def test_render_boundaries():
     with pytest.raises(ValueError):
         m.render({"generator": "unknown"})
     assert m.render({"duration": 0}).shape == (0, 1)
+
+
+def test_render_invariants():
+    from sonoforge import diffusion
+
+    for name in ["sine", "square", "sawtooth", "triangle", "noise", "chirp", "diffusion"]:
+        settings = {"generator": name, "duration": 0.001, "seed": 7}
+        model = diffusion.initialize_model(8)
+        x = m.render(settings, model)
+        assert x.shape == (16, 1) and np.max(np.abs(x)) <= 0.5
+        np.testing.assert_array_equal(x, m.render(settings, model))
