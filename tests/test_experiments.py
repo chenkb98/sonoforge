@@ -103,3 +103,12 @@ def test_sweep_boundaries():
     ]:
         with pytest.raises(ValueError):
             m.sweep({}, seeds, frequencies)
+
+
+def test_sweep_invariants():
+    base = {"amplitude": 0.2}
+    values = m.sweep(base, [1, 2], [100])
+    assert base == {"amplitude": 0.2}
+    values[0]["amplitude"] = 0.9
+    assert values[1]["amplitude"] == 0.2
+    assert m.sweep(base, [1, 2], [100]) == m.sweep(base, [1, 2], [100])
