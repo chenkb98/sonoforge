@@ -91,3 +91,15 @@ def test_render_invariants():
 def test_sweep_example():
     values = m.sweep({}, [1, 2], [220, 440])
     assert [(x["seed"], x["frequency"]) for x in values] == [(1, 220), (1, 440), (2, 220), (2, 440)]
+
+
+def test_sweep_boundaries():
+    for seeds, frequencies in [
+        ([], [220]),
+        ([1], []),
+        ([-1], [220]),
+        ([1], [np.nan]),
+        (list(range(1001)), [220]),
+    ]:
+        with pytest.raises(ValueError):
+            m.sweep({}, seeds, frequencies)
