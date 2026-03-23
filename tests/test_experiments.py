@@ -86,3 +86,8 @@ def test_render_invariants():
         x = m.render(settings, model)
         assert x.shape == (16, 1) and np.max(np.abs(x)) <= 0.5
         np.testing.assert_array_equal(x, m.render(settings, model))
+
+
+def test_sweep_example():
+    values = m.sweep({}, [1, 2], [220, 440])
+    assert [(x["seed"], x["frequency"]) for x in values] == [(1, 220), (1, 440), (2, 220), (2, 440)]

@@ -110,3 +110,15 @@ def render(settings: dict, model: dict | None = None) -> NDArray[np.float64]:
         triangle=synthesis.triangle,
     )
     return generators[name](values["frequency"], seconds, rate, values["amplitude"])
+
+
+def sweep(base: dict, seeds: list[int], frequencies: list[float]) -> list[dict]:
+    """Build a bounded Cartesian parameter sweep with deterministic ordering."""
+    original = config(base)
+    if not seeds or not frequencies or len(seeds) * len(frequencies) > 1000:
+        raise ValueError("sweep needs 1..1000 parameter combinations")
+    return [
+        config(dict(original, seed=seed, frequency=frequency))
+        for seed in seeds
+        for frequency in frequencies
+    ]
