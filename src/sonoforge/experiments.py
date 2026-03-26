@@ -122,3 +122,10 @@ def sweep(base: dict, seeds: list[int], frequencies: list[float]) -> list[dict]:
         for seed in seeds
         for frequency in frequencies
     ]
+
+
+def audio_digest(samples: ArrayLike, rate: int) -> str:
+    """Hash canonical PCM16 WAV bytes, including sample rate and channels."""
+    import hashlib
+
+    return hashlib.sha256(audio.wav_encode(samples, rate)).hexdigest()

@@ -112,3 +112,7 @@ def test_sweep_invariants():
     values[0]["amplitude"] = 0.9
     assert values[1]["amplitude"] == 0.2
     assert m.sweep(base, [1, 2], [100]) == m.sweep(base, [1, 2], [100])
+
+
+def test_audio_digest_example():
+    assert len(m.audio_digest([0, 1], 16000)) == 64
