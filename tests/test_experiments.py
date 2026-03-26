@@ -124,3 +124,13 @@ def test_audio_digest_boundaries():
     with pytest.raises(ValueError):
         m.audio_digest([0], 0)
     assert len(m.audio_digest([], 16000)) == 64
+
+
+def test_audio_digest_invariants():
+    import hashlib
+    from sonoforge import audio
+
+    x = [0, 0.5, -1]
+    assert m.audio_digest(x, 16000) == hashlib.sha256(audio.wav_encode(x, 16000)).hexdigest()
+    assert m.audio_digest(x, 16000) != m.audio_digest(x, 24000)
+    assert m.audio_digest(x, 16000) != m.audio_digest(np.column_stack([x, x]), 16000)
