@@ -116,3 +116,11 @@ def test_sweep_invariants():
 
 def test_audio_digest_example():
     assert len(m.audio_digest([0, 1], 16000)) == 64
+
+
+def test_audio_digest_boundaries():
+    with pytest.raises(ValueError):
+        m.audio_digest([np.nan], 16000)
+    with pytest.raises(ValueError):
+        m.audio_digest([0], 0)
+    assert len(m.audio_digest([], 16000)) == 64
