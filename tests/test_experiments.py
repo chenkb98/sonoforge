@@ -134,3 +134,8 @@ def test_audio_digest_invariants():
     assert m.audio_digest(x, 16000) == hashlib.sha256(audio.wav_encode(x, 16000)).hexdigest()
     assert m.audio_digest(x, 16000) != m.audio_digest(x, 24000)
     assert m.audio_digest(x, 16000) != m.audio_digest(np.column_stack([x, x]), 16000)
+
+
+def test_manifest_example():
+    result = m.manifest({"duration": 0}, [])
+    assert result["frames"] == 0 and result["peak"] == result["rms"] == 0

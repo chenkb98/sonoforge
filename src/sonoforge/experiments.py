@@ -129,3 +129,20 @@ def audio_digest(samples: ArrayLike, rate: int) -> str:
     import hashlib
 
     return hashlib.sha256(audio.wav_encode(samples, rate)).hexdigest()
+
+
+def manifest(settings: dict, samples: ArrayLike) -> dict:
+    """Describe a generated mono artifact with exact configuration and diagnostics."""
+    values, array = config(settings), audio.as_audio(samples)
+    expected = len(synthesis.timebase(values["duration"], values["sample_rate"]))
+    if array.shape != (expected, 1):
+        raise ValueError("artifact shape disagrees with generation configuration")
+    return {
+        "schema_version": 1,
+        "config": values,
+        "frames": len(array),
+        "channels": 1,
+        "sha256": audio_digest(array, values["sample_rate"]),
+        "peak": audio.peak(array),
+        "rms": audio.rms(array),
+    }
