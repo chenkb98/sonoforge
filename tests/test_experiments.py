@@ -139,3 +139,12 @@ def test_audio_digest_invariants():
 def test_manifest_example():
     result = m.manifest({"duration": 0}, [])
     assert result["frames"] == 0 and result["peak"] == result["rms"] == 0
+
+
+def test_manifest_boundaries():
+    with pytest.raises(ValueError):
+        m.manifest({}, [1])
+    with pytest.raises(ValueError):
+        m.manifest({"duration": 0}, np.empty((0, 2)))
+    with pytest.raises(ValueError):
+        m.manifest({"duration": 0.0000625}, [np.nan])
