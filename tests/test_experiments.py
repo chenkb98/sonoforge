@@ -148,3 +148,21 @@ def test_manifest_boundaries():
         m.manifest({"duration": 0}, np.empty((0, 2)))
     with pytest.raises(ValueError):
         m.manifest({"duration": 0.0000625}, [np.nan])
+
+
+def test_manifest_invariants():
+    settings = {"duration": 0.01, "generator": "noise", "seed": 7}
+    samples = m.render(settings)
+    result = m.manifest(settings, samples)
+    assert set(result) == {
+        "schema_version",
+        "config",
+        "frames",
+        "channels",
+        "sha256",
+        "peak",
+        "rms",
+    }
+    assert result["frames"] == 160 and result["channels"] == 1
+    assert result["sha256"] == m.audio_digest(samples, 16000)
+    assert result == m.manifest(settings, samples)
