@@ -204,3 +204,9 @@ def test_manifest_encode_invariants():
 def test_manifest_decode_example():
     value = m.manifest({"duration": 0}, [])
     assert m.manifest_decode(m.manifest_encode(value)) == value
+
+
+def test_manifest_decode_boundaries():
+    for text in ["", "null", "[]", "{}", '{"x":1,"x":2}', '{"x":NaN}', "x" * 100001]:
+        with pytest.raises(ValueError):
+            m.manifest_decode(text)
