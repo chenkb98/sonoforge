@@ -206,3 +206,23 @@ def manifest_encode(value: dict) -> str:
         )
         + "\n"
     )
+
+
+def manifest_decode(text: str) -> dict:
+    """Parse a manifest, rejecting duplicate keys and nonstandard constants."""
+    import json
+
+    def pairs(items):
+        result = {}
+        for key, value in items:
+            if key in result:
+                raise ValueError("duplicate JSON key")
+            result[key] = value
+        return result
+
+    def constant(value):
+        raise ValueError("non-finite JSON constant")
+
+    if not isinstance(text, str) or len(text) > 100000:
+        raise ValueError("manifest must be a bounded string")
+    return _manifest(json.loads(text, object_pairs_hook=pairs, parse_constant=constant))

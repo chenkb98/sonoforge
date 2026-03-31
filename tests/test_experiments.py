@@ -199,3 +199,8 @@ def test_manifest_encode_invariants():
             m.manifest_encode(altered)
     with pytest.raises(ValueError):
         m.manifest_encode(dict(value, unexpected=1))
+
+
+def test_manifest_decode_example():
+    value = m.manifest({"duration": 0}, [])
+    assert m.manifest_decode(m.manifest_encode(value)) == value
