@@ -146,3 +146,63 @@ def manifest(settings: dict, samples: ArrayLike) -> dict:
         "peak": audio.peak(array),
         "rms": audio.rms(array),
     }
+
+
+def _manifest(value: dict) -> dict:
+    if not isinstance(value, dict) or set(value) != {
+        "schema_version",
+        "config",
+        "frames",
+        "channels",
+        "sha256",
+        "peak",
+        "rms",
+    }:
+        raise ValueError("invalid manifest fields")
+    if (
+        type(value["schema_version"]) is not int
+        or value["schema_version"] != 1
+        or type(value["channels"]) is not int
+        or value["channels"] != 1
+    ):
+        raise ValueError("unsupported manifest schema")
+    settings = config(value["config"])
+    if set(value["config"]) != set(settings):
+        raise ValueError("manifest configuration must be complete")
+    frames = len(synthesis.timebase(settings["duration"], settings["sample_rate"]))
+    if type(value["frames"]) is not int or value["frames"] != frames:
+        raise ValueError("invalid frame count")
+    digest = value["sha256"]
+    if (
+        not isinstance(digest, str)
+        or len(digest) != 64
+        or any(c not in "0123456789abcdef" for c in digest)
+    ):
+        raise ValueError("invalid SHA-256")
+    for key in ["peak", "rms"]:
+        if (
+            isinstance(value[key], bool)
+            or not isinstance(value[key], (int, float))
+            or not math.isfinite(value[key])
+            or value[key] < 0
+        ):
+            raise ValueError("invalid audio diagnostic")
+    if value["rms"] > value["peak"] + 1e-12:
+        raise ValueError("RMS cannot exceed peak")
+    return dict(value, config=settings)
+
+
+def manifest_encode(value: dict) -> str:
+    """Serialize the exact manifest schema to stable, finite JSON."""
+    import json
+
+    return (
+        json.dumps(
+            _manifest(value),
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            allow_nan=False,
+        )
+        + "\n"
+    )

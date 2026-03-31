@@ -166,3 +166,7 @@ def test_manifest_invariants():
     assert result["frames"] == 160 and result["channels"] == 1
     assert result["sha256"] == m.audio_digest(samples, 16000)
     assert result == m.manifest(settings, samples)
+
+
+def test_manifest_encode_example():
+    assert m.manifest_encode(m.manifest({"duration": 0}, [])).endswith("\n")
