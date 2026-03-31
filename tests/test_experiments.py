@@ -184,3 +184,18 @@ def test_manifest_encode_boundaries():
     ]:
         with pytest.raises(ValueError):
             m.manifest_encode(dict(value, **{key: invalid}))
+
+
+def test_manifest_encode_invariants():
+    import json
+
+    value = m.manifest({"duration": 0}, [])
+    assert json.loads(m.manifest_encode(value)) == value
+    assert m.manifest_encode(dict(reversed(list(value.items())))) == m.manifest_encode(value)
+    for key in value:
+        altered = dict(value)
+        altered.pop(key)
+        with pytest.raises(ValueError):
+            m.manifest_encode(altered)
+    with pytest.raises(ValueError):
+        m.manifest_encode(dict(value, unexpected=1))
