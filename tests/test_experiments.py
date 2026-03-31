@@ -170,3 +170,17 @@ def test_manifest_invariants():
 
 def test_manifest_encode_example():
     assert m.manifest_encode(m.manifest({"duration": 0}, [])).endswith("\n")
+
+
+def test_manifest_encode_boundaries():
+    value = m.manifest({"duration": 0}, [])
+    for key, invalid in [
+        ("frames", True),
+        ("channels", 2),
+        ("schema_version", True),
+        ("sha256", "x" * 64),
+        ("peak", np.nan),
+        ("rms", -1),
+    ]:
+        with pytest.raises(ValueError):
+            m.manifest_encode(dict(value, **{key: invalid}))
