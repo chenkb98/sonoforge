@@ -210,3 +210,11 @@ def test_manifest_decode_boundaries():
     for text in ["", "null", "[]", "{}", '{"x":1,"x":2}', '{"x":NaN}', "x" * 100001]:
         with pytest.raises(ValueError):
             m.manifest_decode(text)
+
+
+def test_manifest_decode_invariants():
+    for generator in ["sine", "noise", "chirp"]:
+        settings = {"generator": generator, "duration": 0.001}
+        value = m.manifest(settings, m.render(settings))
+        encoded = m.manifest_encode(value)
+        assert m.manifest_encode(m.manifest_decode(encoded)) == encoded
