@@ -231,3 +231,12 @@ def test_generate_run_boundaries():
     for configurations in [[], [None], [{"unknown": 1}], [{}] * 1001]:
         with pytest.raises(ValueError):
             m.generate_run(configurations)
+
+
+def test_generate_run_invariants():
+    settings = m.sweep({"duration": 0.001, "generator": "noise"}, [1, 2], [440])
+    left, right = m.generate_run(settings), m.generate_run(settings)
+    for a, b in zip(left, right):
+        assert a["manifest"] == b["manifest"]
+        np.testing.assert_array_equal(a["audio"], b["audio"])
+    assert left[0]["manifest"]["sha256"] != left[1]["manifest"]["sha256"]
