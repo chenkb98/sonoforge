@@ -218,3 +218,10 @@ def test_manifest_decode_invariants():
         value = m.manifest(settings, m.render(settings))
         encoded = m.manifest_encode(value)
         assert m.manifest_encode(m.manifest_decode(encoded)) == encoded
+
+
+def test_generate_run_example():
+    result = m.generate_run(
+        [{"duration": 0.001}, {"duration": 0.001, "seed": 1, "generator": "noise"}]
+    )
+    assert len(result) == 2 and all(x["audio"].shape == (16, 1) for x in result)

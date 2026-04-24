@@ -226,3 +226,15 @@ def manifest_decode(text: str) -> dict:
     if not isinstance(text, str) or len(text) > 100000:
         raise ValueError("manifest must be a bounded string")
     return _manifest(json.loads(text, object_pairs_hook=pairs, parse_constant=constant))
+
+
+def generate_run(configurations: list[dict], model: dict | None = None) -> list[dict]:
+    """Render a bounded list of configurations and retain paired manifests."""
+    if not isinstance(configurations, list) or not 1 <= len(configurations) <= 1000:
+        raise ValueError("run needs 1..1000 configurations")
+    settings = [config(value) for value in configurations]
+    result = []
+    for value in settings:
+        samples = render(value, model)
+        result.append({"manifest": manifest(value, samples), "audio": samples})
+    return result
