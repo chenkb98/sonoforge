@@ -225,3 +225,9 @@ def test_generate_run_example():
         [{"duration": 0.001}, {"duration": 0.001, "seed": 1, "generator": "noise"}]
     )
     assert len(result) == 2 and all(x["audio"].shape == (16, 1) for x in result)
+
+
+def test_generate_run_boundaries():
+    for configurations in [[], [None], [{"unknown": 1}], [{}] * 1001]:
+        with pytest.raises(ValueError):
+            m.generate_run(configurations)

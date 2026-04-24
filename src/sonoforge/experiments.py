@@ -232,6 +232,8 @@ def generate_run(configurations: list[dict], model: dict | None = None) -> list[
     """Render a bounded list of configurations and retain paired manifests."""
     if not isinstance(configurations, list) or not 1 <= len(configurations) <= 1000:
         raise ValueError("run needs 1..1000 configurations")
+    if any(not isinstance(value, dict) for value in configurations):
+        raise ValueError("each configuration must be an object")
     settings = [config(value) for value in configurations]
     result = []
     for value in settings:
