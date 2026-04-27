@@ -250,3 +250,17 @@ def test_write_run_example():
         files = m.write_run(str(Path(temporary) / "run"), m.generate_run([{"duration": 0.001}]))
         assert len(files) == 1 and Path(files[0]).read_bytes()[:4] == b"RIFF"
         assert (Path(temporary) / "run" / "manifest.json").is_file()
+
+
+def test_write_run_boundaries():
+    import tempfile
+    from pathlib import Path
+
+    with tempfile.TemporaryDirectory() as temporary:
+        with pytest.raises(FileExistsError):
+            m.write_run(temporary, m.generate_run([{"duration": 0}]))
+        result = m.generate_run([{"duration": 0.001}])
+        result[0]["audio"][0] = 99
+        with pytest.raises(ValueError):
+            m.write_run(str(Path(temporary) / "bad"), result)
+        assert not (Path(temporary) / "bad").exists()
