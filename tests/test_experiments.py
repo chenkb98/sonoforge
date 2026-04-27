@@ -240,3 +240,13 @@ def test_generate_run_invariants():
         assert a["manifest"] == b["manifest"]
         np.testing.assert_array_equal(a["audio"], b["audio"])
     assert left[0]["manifest"]["sha256"] != left[1]["manifest"]["sha256"]
+
+
+def test_write_run_example():
+    import tempfile
+    from pathlib import Path
+
+    with tempfile.TemporaryDirectory() as temporary:
+        files = m.write_run(str(Path(temporary) / "run"), m.generate_run([{"duration": 0.001}]))
+        assert len(files) == 1 and Path(files[0]).read_bytes()[:4] == b"RIFF"
+        assert (Path(temporary) / "run" / "manifest.json").is_file()

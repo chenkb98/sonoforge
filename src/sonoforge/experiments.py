@@ -240,3 +240,38 @@ def generate_run(configurations: list[dict], model: dict | None = None) -> list[
         samples = render(value, model)
         result.append({"manifest": manifest(value, samples), "audio": samples})
     return result
+
+
+def write_run(directory: str, results: list[dict]) -> list[str]:
+    """Write a new result directory; reject mismatched artifacts and existing paths."""
+    from pathlib import Path
+    import json
+    import shutil
+
+    if not isinstance(results, list) or not 1 <= len(results) <= 1000:
+        raise ValueError("results must be a bounded nonempty list")
+    artifacts, records = [], []
+    for index, result in enumerate(results):
+        if not isinstance(result, dict) or set(result) != {"manifest", "audio"}:
+            raise ValueError("invalid result schema")
+        metadata = _manifest(result["manifest"])
+        if manifest(metadata["config"], result["audio"]) != metadata:
+            raise ValueError("artifact content disagrees with manifest")
+        filename = f"{index:04d}-{metadata['sha256'][:12]}.wav"
+        artifacts.append(
+            (filename, audio.wav_encode(result["audio"], metadata["config"]["sample_rate"]))
+        )
+        records.append({"file": filename, "manifest": metadata})
+    target = Path(directory)
+    target.mkdir(exist_ok=False)
+    try:
+        for filename, payload in artifacts:
+            (target / filename).write_bytes(payload)
+        (target / "manifest.json").write_text(
+            json.dumps(records, ensure_ascii=False, sort_keys=True, indent=2, allow_nan=False)
+            + "\n"
+        )
+    except Exception:
+        shutil.rmtree(target)
+        raise
+    return [str(target / name) for name, _ in artifacts]
