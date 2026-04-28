@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from sonoforge import experiments as m
 
 
@@ -128,6 +129,7 @@ def test_audio_digest_boundaries():
 
 def test_audio_digest_invariants():
     import hashlib
+
     from sonoforge import audio
 
     x = [0, 0.5, -1]
@@ -267,8 +269,10 @@ def test_write_run_boundaries():
 
 
 def test_write_run_invariants():
-    import tempfile, json
+    import json
+    import tempfile
     from pathlib import Path
+
     from sonoforge import audio
 
     with tempfile.TemporaryDirectory() as temporary:

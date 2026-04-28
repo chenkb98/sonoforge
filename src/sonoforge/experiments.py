@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 import math
+from typing import Any
+
 import numpy as np
 from numpy.typing import ArrayLike, NDArray
-
 
 from . import audio, diffusion, synthesis
 
 
 def config(values: dict | None = None) -> dict:
     """Validate a strict, serializable generation configuration."""
-    result = dict(
+    result: dict[str, Any] = dict(
         generator="sine",
         sample_rate=16000,
         duration=0.1,
@@ -95,7 +96,8 @@ def render(settings: dict, model: dict | None = None) -> NDArray[np.float64]:
             raise ValueError("baseline diffusion output is limited to 32768 frames")
         if not size:
             return np.empty((0, 1))
-        parts, total = [], 0
+        parts: list[NDArray[np.float64]] = []
+        total = 0
         while total < size:
             part = diffusion.sample(
                 model, diffusion.linear_schedule(values["steps"]), values["seed"] + len(parts)
@@ -244,9 +246,9 @@ def generate_run(configurations: list[dict], model: dict | None = None) -> list[
 
 def write_run(directory: str, results: list[dict]) -> list[str]:
     """Write a new result directory; reject mismatched artifacts and existing paths."""
-    from pathlib import Path
     import json
     import shutil
+    from pathlib import Path
 
     if not isinstance(results, list) or not 1 <= len(results) <= 1000:
         raise ValueError("results must be a bounded nonempty list")
