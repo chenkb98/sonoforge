@@ -264,3 +264,22 @@ def test_write_run_boundaries():
         with pytest.raises(ValueError):
             m.write_run(str(Path(temporary) / "bad"), result)
         assert not (Path(temporary) / "bad").exists()
+
+
+def test_write_run_invariants():
+    import tempfile, json
+    from pathlib import Path
+    from sonoforge import audio
+
+    with tempfile.TemporaryDirectory() as temporary:
+        output = Path(temporary) / "run"
+        files = m.write_run(
+            str(output),
+            m.generate_run(m.sweep({"duration": 0.001, "generator": "noise"}, [1, 2], [440])),
+        )
+        records = json.loads((output / "manifest.json").read_text())
+        assert len(records) == len(files) == 2
+        for path, record in zip(files, records):
+            samples, rate = audio.wav_decode(Path(path).read_bytes())
+            assert Path(path).name == record["file"]
+            assert m.audio_digest(samples, rate) == record["manifest"]["sha256"]
