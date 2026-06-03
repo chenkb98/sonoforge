@@ -1,4 +1,6 @@
-"""Reproducible audio generation experiments"""
+"""Reproducible audio generation experiments with synthesis and diffusion baselines, manifests, and metrics."""
+
+from .experiments import config, generate_run, render, write_run
 
 __version__ = "0.1.0"
-__all__ = ["__version__"]
+__all__ = ["__version__", "config", "generate_run", "render", "write_run"]
