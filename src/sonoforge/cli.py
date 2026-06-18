@@ -34,7 +34,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "generate":
             settings = dict(
-                experiments.parse_prompt(args.prompt),
+                experiments.parse_prompt(args.prompt, args.sample_rate),
                 duration=args.duration,
                 sample_rate=args.sample_rate,
                 seed=args.seed,

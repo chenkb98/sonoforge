@@ -29,6 +29,8 @@ def stable_audio(
     rate = getattr(vae, "sampling_rate", None)
     if rate is None:
         rate = getattr(getattr(vae, "config", None), "sampling_rate", None)
+    if rate is None:
+        raise ValueError("pipeline VAE must declare its sampling rate")
     rate = audio.sample_rate(rate)
     result = pipeline(
         prompt=prompt,

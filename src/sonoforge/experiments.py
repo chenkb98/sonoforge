@@ -57,10 +57,11 @@ def config(values: dict | None = None) -> dict:
     return result
 
 
-def parse_prompt(prompt: str) -> dict:
+def parse_prompt(prompt: str, sample_rate: int = 16000) -> dict:
     """Parse a small symbolic prompt grammar, not natural-language semantics."""
     if not isinstance(prompt, str) or len(prompt) > 200:
         raise ValueError("prompt must be a short string")
+    audio.sample_rate(sample_rate)
     tokens = prompt.strip().lower().split()
     if tokens == ["noise"]:
         return {"generator": "noise"}
@@ -74,7 +75,7 @@ def parse_prompt(prompt: str) -> dict:
         }
     else:
         raise ValueError("expected noise, GENERATOR HZ, or chirp START_HZ END_HZ")
-    config(values)
+    config(dict(values, sample_rate=sample_rate))
     return values
 
 
@@ -100,7 +101,9 @@ def render(settings: dict, model: dict | None = None) -> NDArray[np.float64]:
         total = 0
         while total < size:
             part = diffusion.sample(
-                model, diffusion.linear_schedule(values["steps"]), values["seed"] + len(parts)
+                model,
+                diffusion.linear_schedule(values["steps"]),
+                (values["seed"] + len(parts)) % 2**63,
             )
             parts.append(part)
             total += len(part)
@@ -139,6 +142,7 @@ def manifest(settings: dict, samples: ArrayLike) -> dict:
     expected = len(synthesis.timebase(values["duration"], values["sample_rate"]))
     if array.shape != (expected, 1):
         raise ValueError("artifact shape disagrees with generation configuration")
+    array, _ = audio.wav_decode(audio.wav_encode(array, values["sample_rate"]))
     return {
         "schema_version": 1,
         "config": values,

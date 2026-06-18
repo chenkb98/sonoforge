@@ -1,5 +1,6 @@
 import numpy as np
-from sonoforge.audio import frames, overlap_add, wav_encode, wav_decode
+
+from sonoforge.audio import frames, overlap_add, wav_decode, wav_encode
 from sonoforge.synthesis import sine
 
 signal = sine(440, 0.05)

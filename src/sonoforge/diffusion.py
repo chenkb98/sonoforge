@@ -104,6 +104,8 @@ def _batch(noisy: ArrayLike, times: ArrayLike, width: int) -> NDArray[np.float64
     values = np.asarray(noisy, dtype=float)
     if values.ndim == 1:
         values = values[None, :]
+    if values.ndim != 2:
+        raise ValueError("noisy input must be a vector or matrix")
     time = np.asarray(times, dtype=float)
     if time.ndim == 0:
         time = np.full(len(values), float(time))

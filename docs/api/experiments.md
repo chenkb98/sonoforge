@@ -40,3 +40,9 @@
 ## `write_run`
 
 把 WAV 与配套清单写入全新的输出目录，拒绝覆盖现有路径。保存前校验内容摘要与诊断信息，写入失败时移除本次新建的目录。
+
+## Artifact precision and selected sample rate
+
+`parse_prompt(prompt, sample_rate=16000)` validates frequencies at the selected rate.
+Manifest hashes, peak and RMS describe the serialized PCM16 WAV, including quantization
+and clipping. Diffusion window seeds wrap modulo 2**63.
