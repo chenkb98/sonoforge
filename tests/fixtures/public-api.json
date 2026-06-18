@@ -1,0 +1,538 @@
+{
+  "commands": [
+    {
+      "action": "_HelpAction",
+      "choices": null,
+      "const": null,
+      "default": "==SUPPRESS==",
+      "dest": "help",
+      "nargs": 0,
+      "options": [
+        "-h",
+        "--help"
+      ],
+      "required": false,
+      "type": null
+    },
+    {
+      "action": "_VersionAction",
+      "choices": null,
+      "const": null,
+      "default": "==SUPPRESS==",
+      "dest": "version",
+      "nargs": 0,
+      "options": [
+        "--version"
+      ],
+      "required": false,
+      "type": null
+    },
+    {
+      "action": "_SubParsersAction",
+      "commands": {
+        "generate": [
+          {
+            "action": "_HelpAction",
+            "choices": null,
+            "const": null,
+            "default": "==SUPPRESS==",
+            "dest": "help",
+            "nargs": 0,
+            "options": [
+              "-h",
+              "--help"
+            ],
+            "required": false,
+            "type": null
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": "sine 440",
+            "dest": "prompt",
+            "nargs": null,
+            "options": [
+              "--prompt"
+            ],
+            "required": false,
+            "type": null
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": 0.1,
+            "dest": "duration",
+            "nargs": null,
+            "options": [
+              "--duration"
+            ],
+            "required": false,
+            "type": "float"
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": 16000,
+            "dest": "sample_rate",
+            "nargs": null,
+            "options": [
+              "--sample-rate"
+            ],
+            "required": false,
+            "type": "int"
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": 0,
+            "dest": "seed",
+            "nargs": null,
+            "options": [
+              "--seed"
+            ],
+            "required": false,
+            "type": "int"
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": null,
+            "dest": "output",
+            "nargs": null,
+            "options": [
+              "--output"
+            ],
+            "required": true,
+            "type": null
+          }
+        ],
+        "inspect": [
+          {
+            "action": "_HelpAction",
+            "choices": null,
+            "const": null,
+            "default": "==SUPPRESS==",
+            "dest": "help",
+            "nargs": 0,
+            "options": [
+              "-h",
+              "--help"
+            ],
+            "required": false,
+            "type": null
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": null,
+            "dest": "path",
+            "nargs": null,
+            "options": [],
+            "required": true,
+            "type": null
+          }
+        ],
+        "train-demo": [
+          {
+            "action": "_HelpAction",
+            "choices": null,
+            "const": null,
+            "default": "==SUPPRESS==",
+            "dest": "help",
+            "nargs": 0,
+            "options": [
+              "-h",
+              "--help"
+            ],
+            "required": false,
+            "type": null
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": 100,
+            "dest": "steps",
+            "nargs": null,
+            "options": [
+              "--steps"
+            ],
+            "required": false,
+            "type": "int"
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": 0,
+            "dest": "seed",
+            "nargs": null,
+            "options": [
+              "--seed"
+            ],
+            "required": false,
+            "type": "int"
+          },
+          {
+            "action": "_StoreAction",
+            "choices": null,
+            "const": null,
+            "default": null,
+            "dest": "output",
+            "nargs": null,
+            "options": [
+              "--output"
+            ],
+            "required": true,
+            "type": null
+          }
+        ]
+      },
+      "const": null,
+      "default": null,
+      "dest": "command",
+      "nargs": "A...",
+      "options": [],
+      "required": true,
+      "type": null
+    }
+  ],
+  "exports": [
+    "__version__",
+    "config",
+    "generate_run",
+    "render",
+    "write_run"
+  ],
+  "modules": {
+    "sonoforge.adapters": {
+      "constants": {},
+      "definitions": {
+        "stable_audio": {
+          "kind": "function",
+          "signature": "(prompt: 'str', pipeline: 'Any', generator: 'Any', seconds: 'float' = 5.0, steps: 'int' = 50) -> 'dict'"
+        }
+      }
+    },
+    "sonoforge.audio": {
+      "constants": {},
+      "definitions": {
+        "as_audio": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'NDArray[np.float64]'"
+        },
+        "band_energy": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int', low: 'float', high: 'float') -> 'float'"
+        },
+        "channels": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', count: 'int') -> 'NDArray[np.float64]'"
+        },
+        "clipping_fraction": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', threshold: 'float' = 1.0) -> 'float'"
+        },
+        "concatenate": {
+          "kind": "function",
+          "signature": "(clips: 'Sequence[ArrayLike]') -> 'NDArray[np.float64]'"
+        },
+        "crop": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', start: 'int', stop: 'int') -> 'NDArray[np.float64]'"
+        },
+        "crossfade": {
+          "kind": "function",
+          "signature": "(left: 'ArrayLike', right: 'ArrayLike', frames: 'int') -> 'NDArray[np.float64]'"
+        },
+        "duration": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int') -> 'float'"
+        },
+        "fade_in": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', frames: 'int') -> 'NDArray[np.float64]'"
+        },
+        "fade_out": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', frames: 'int') -> 'NDArray[np.float64]'"
+        },
+        "frames": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', size: 'int', hop: 'int', pad_end: 'bool' = True) -> 'NDArray[np.float64]'"
+        },
+        "gain": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', decibels: 'float') -> 'NDArray[np.float64]'"
+        },
+        "mix": {
+          "kind": "function",
+          "signature": "(left: 'ArrayLike', right: 'ArrayLike', weight: 'float' = 0.5) -> 'NDArray[np.float64]'"
+        },
+        "mono": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'NDArray[np.float64]'"
+        },
+        "normalize_peak": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', target: 'float' = 0.95) -> 'NDArray[np.float64]'"
+        },
+        "normalize_rms": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', target: 'float' = 0.1) -> 'NDArray[np.float64]'"
+        },
+        "overlap_add": {
+          "kind": "function",
+          "signature": "(windows: 'ArrayLike', hop: 'int', length: 'int | None' = None) -> 'NDArray[np.float64]'"
+        },
+        "pad": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', before: 'int' = 0, after: 'int' = 0) -> 'NDArray[np.float64]'"
+        },
+        "pcm16_decode": {
+          "kind": "function",
+          "signature": "(data: 'bytes', channel_count: 'int' = 1) -> 'NDArray[np.float64]'"
+        },
+        "pcm16_encode": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'bytes'"
+        },
+        "peak": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'float'"
+        },
+        "remove_dc": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'NDArray[np.float64]'"
+        },
+        "repeat": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', count: 'int') -> 'NDArray[np.float64]'"
+        },
+        "resample": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', source_rate: 'int', target_rate: 'int') -> 'NDArray[np.float64]'"
+        },
+        "reverse": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'NDArray[np.float64]'"
+        },
+        "rms": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'float'"
+        },
+        "sample_rate": {
+          "kind": "function",
+          "signature": "(value: 'int') -> 'int'"
+        },
+        "snr": {
+          "kind": "function",
+          "signature": "(reference: 'ArrayLike', estimate: 'ArrayLike', floor_db: 'float' = -120.0) -> 'float'"
+        },
+        "spectral_centroid": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int') -> 'float'"
+        },
+        "spectral_flatness": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int', epsilon: 'float' = 1e-12) -> 'float'"
+        },
+        "spectrum": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int') -> 'tuple[NDArray[np.float64], NDArray[np.float64]]'"
+        },
+        "trim": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', threshold: 'float' = 0.0001) -> 'NDArray[np.float64]'"
+        },
+        "wav_decode": {
+          "kind": "function",
+          "signature": "(payload: 'bytes') -> 'tuple[NDArray[np.float64], int]'"
+        },
+        "wav_encode": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int') -> 'bytes'"
+        },
+        "zero_crossing_rate": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike') -> 'float'"
+        }
+      }
+    },
+    "sonoforge.cli": {
+      "constants": {},
+      "definitions": {
+        "build_parser": {
+          "kind": "function",
+          "signature": "() -> 'argparse.ArgumentParser'"
+        },
+        "main": {
+          "kind": "function",
+          "signature": "(argv: 'list[str] | None' = None) -> 'int'"
+        }
+      }
+    },
+    "sonoforge.diffusion": {
+      "constants": {},
+      "definitions": {
+        "checkpoint_decode": {
+          "kind": "function",
+          "signature": "(payload: 'bytes') -> 'dict'"
+        },
+        "checkpoint_encode": {
+          "kind": "function",
+          "signature": "(model: 'dict') -> 'bytes'"
+        },
+        "cosine_schedule": {
+          "kind": "function",
+          "signature": "(steps: 'int', offset: 'float' = 0.008) -> 'NDArray[np.float64]'"
+        },
+        "ddim_step": {
+          "kind": "function",
+          "signature": "(noisy: 'ArrayLike', epsilon: 'ArrayLike', alpha: 'float', previous_alpha: 'float') -> 'NDArray[np.float64]'"
+        },
+        "forward_noise": {
+          "kind": "function",
+          "signature": "(clean: 'ArrayLike', noise: 'ArrayLike', alpha: 'float') -> 'NDArray[np.float64]'"
+        },
+        "initialize_model": {
+          "kind": "function",
+          "signature": "(width: 'int' = 16, seed: 'int' = 0) -> 'dict'"
+        },
+        "linear_schedule": {
+          "kind": "function",
+          "signature": "(steps: 'int', start: 'float' = 0.0001, end: 'float' = 0.02) -> 'NDArray[np.float64]'"
+        },
+        "predict_clean": {
+          "kind": "function",
+          "signature": "(noisy: 'ArrayLike', epsilon: 'ArrayLike', alpha: 'float') -> 'NDArray[np.float64]'"
+        },
+        "predict_noise": {
+          "kind": "function",
+          "signature": "(model: 'dict', noisy: 'ArrayLike', times: 'ArrayLike') -> 'NDArray[np.float64]'"
+        },
+        "sample": {
+          "kind": "function",
+          "signature": "(model: 'dict', betas: 'ArrayLike', seed: 'int' = 0) -> 'NDArray[np.float64]'"
+        },
+        "train_denoiser": {
+          "kind": "function",
+          "signature": "(model: 'dict', noisy: 'ArrayLike', times: 'ArrayLike', target_noise: 'ArrayLike', steps: 'int' = 100, learning_rate: 'float' = 0.05) -> 'dict'"
+        },
+        "training_loss": {
+          "kind": "function",
+          "signature": "(model: 'dict', noisy: 'ArrayLike', times: 'ArrayLike', target_noise: 'ArrayLike') -> 'float'"
+        },
+        "training_pairs": {
+          "kind": "function",
+          "signature": "(clean: 'ArrayLike', betas: 'ArrayLike', seed: 'int' = 0) -> 'tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64]]'"
+        },
+        "validate_schedule": {
+          "kind": "function",
+          "signature": "(betas: 'ArrayLike') -> 'NDArray[np.float64]'"
+        }
+      }
+    },
+    "sonoforge.experiments": {
+      "constants": {},
+      "definitions": {
+        "audio_digest": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', rate: 'int') -> 'str'"
+        },
+        "config": {
+          "kind": "function",
+          "signature": "(values: 'dict | None' = None) -> 'dict'"
+        },
+        "generate_run": {
+          "kind": "function",
+          "signature": "(configurations: 'list[dict]', model: 'dict | None' = None) -> 'list[dict]'"
+        },
+        "manifest": {
+          "kind": "function",
+          "signature": "(settings: 'dict', samples: 'ArrayLike') -> 'dict'"
+        },
+        "manifest_decode": {
+          "kind": "function",
+          "signature": "(text: 'str') -> 'dict'"
+        },
+        "manifest_encode": {
+          "kind": "function",
+          "signature": "(value: 'dict') -> 'str'"
+        },
+        "parse_prompt": {
+          "kind": "function",
+          "signature": "(prompt: 'str', sample_rate: 'int' = 16000) -> 'dict'"
+        },
+        "render": {
+          "kind": "function",
+          "signature": "(settings: 'dict', model: 'dict | None' = None) -> 'NDArray[np.float64]'"
+        },
+        "sweep": {
+          "kind": "function",
+          "signature": "(base: 'dict', seeds: 'list[int]', frequencies: 'list[float]') -> 'list[dict]'"
+        },
+        "write_run": {
+          "kind": "function",
+          "signature": "(directory: 'str', results: 'list[dict]') -> 'list[str]'"
+        }
+      }
+    },
+    "sonoforge.synthesis": {
+      "constants": {},
+      "definitions": {
+        "adsr": {
+          "kind": "function",
+          "signature": "(attack: 'int', decay: 'int', sustain: 'int', release: 'int', level: 'float' = 0.7) -> 'NDArray[np.float64]'"
+        },
+        "apply_envelope": {
+          "kind": "function",
+          "signature": "(samples: 'ArrayLike', envelope: 'ArrayLike') -> 'NDArray[np.float64]'"
+        },
+        "chirp": {
+          "kind": "function",
+          "signature": "(start_hz: 'float', end_hz: 'float', seconds: 'float', rate: 'int' = 16000, amplitude: 'float' = 0.5) -> 'NDArray[np.float64]'"
+        },
+        "harmonics": {
+          "kind": "function",
+          "signature": "(fundamental: 'float', weights: 'ArrayLike', seconds: 'float', rate: 'int' = 16000) -> 'NDArray[np.float64]'"
+        },
+        "noise": {
+          "kind": "function",
+          "signature": "(seconds: 'float', rate: 'int' = 16000, seed: 'int' = 0, amplitude: 'float' = 0.5) -> 'NDArray[np.float64]'"
+        },
+        "sawtooth": {
+          "kind": "function",
+          "signature": "(frequency: 'float', seconds: 'float', rate: 'int' = 16000, amplitude: 'float' = 0.5) -> 'NDArray[np.float64]'"
+        },
+        "sine": {
+          "kind": "function",
+          "signature": "(frequency: 'float', seconds: 'float', rate: 'int' = 16000, amplitude: 'float' = 0.5, phase: 'float' = 0.0) -> 'NDArray[np.float64]'"
+        },
+        "square": {
+          "kind": "function",
+          "signature": "(frequency: 'float', seconds: 'float', rate: 'int' = 16000, amplitude: 'float' = 0.5) -> 'NDArray[np.float64]'"
+        },
+        "timebase": {
+          "kind": "function",
+          "signature": "(seconds: 'float', rate: 'int') -> 'NDArray[np.float64]'"
+        },
+        "tone_bank": {
+          "kind": "function",
+          "signature": "(frequencies: 'ArrayLike', seconds: 'float', rate: 'int' = 16000, amplitude: 'float' = 0.5) -> 'NDArray[np.float64]'"
+        },
+        "triangle": {
+          "kind": "function",
+          "signature": "(frequency: 'float', seconds: 'float', rate: 'int' = 16000, amplitude: 'float' = 0.5) -> 'NDArray[np.float64]'"
+        }
+      }
+    }
+  },
+  "schema_version": 1
+}

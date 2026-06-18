@@ -8,3 +8,5 @@
 | `synthesis` | [synthesis](api/synthesis.md) |
 
 顶层便利导出：`__version__`, `config`, `generate_run`, `render`, `write_run`。
+
+Optional pretrained model integration: [adapter contract](model-adapter.md).
